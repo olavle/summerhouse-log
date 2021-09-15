@@ -14,4 +14,12 @@ export interface House {
   maxResidents?: number;
 }
 
+export type NewHouse = Omit<House, 'id'>;
+
 type HosueForUser = Pick<House, 'id'>;
+
+export type NewHouseFields = {
+  name: unknown;
+  address?: unknown;
+  maxResidents?: unknown;
+};
