@@ -1,12 +1,14 @@
 import express, { json } from 'express';
-import dotenv from 'dotenv';
 import userRouter from './routers/user';
 import houseRouter from './routers/house';
-
-dotenv.config();
+import databaseHelper from './databaseHelper';
+import config from './config';
 
 const app = express();
-const port = process.env.PORT;
+const port = config.port;
+
+// databaseHelper.testDbConnection();
+databaseHelper.seedDataBase();
 
 app.use(json());
 app.use('/api/users', userRouter);

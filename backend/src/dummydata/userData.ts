@@ -7,11 +7,6 @@ const users: User[] = [
     lname: 'User',
     username: 'testuser',
     password: 'testuser',
-    linkedHouses: [
-        {
-            id: '1'
-        }
-    ]
   },
   {
     id: '2',

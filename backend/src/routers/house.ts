@@ -1,6 +1,6 @@
 import express from 'express';
 import houseData from '../dummydata/houseData';
-import { toNewHouseEntry } from '../utils';
+import { validateNewHouse } from '../utils';
 import houseService from '../services/houseService';
 
 const router = express.Router();
@@ -22,9 +22,11 @@ router.get('/:id', (req, res) => {
 // Add new house
 router.post('/', (req, res) => {
   try {
-    const newHouse = toNewHouseEntry(req.body);
+    const newHouse = validateNewHouse(req.body);
     const addedHouse = houseService.addHouse(newHouse);
     res.status(201).json(addedHouse);
+  // Disabled elsint to access error message
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       error: `${error.message}`,
