@@ -1,6 +1,7 @@
 import { Pool, Client } from 'pg';
-import config from './config';
-import { User } from './types';
+import config from '../src/config';
+import { User } from '../src/types';
+import { tableCreationStatements } from './creationStatements';
 
 const user = config.db.user;
 const host = config.db.host;
@@ -45,15 +46,15 @@ const testDbConnection = (): void => {
   });
 };
 
-const tableCreationText = `CREATE TABLE IF NOT EXISTS app_user (
-  id varchar(40) NOT NULL UNIQUE,
-  first_name varchar(30) NOT NULL,
-  last_name varchar(30) NOT NULL,
-  username varchar(50) NOT NULL,
-  passwordHash varchar(50) NOT NULL,
-  email varchar(50),
-  PRIMARY KEY ("id")
-);`;
+// const tableCreationText = `CREATE TABLE IF NOT EXISTS app_user (
+//   id varchar(40) NOT NULL UNIQUE,
+//   first_name varchar(30) NOT NULL,
+//   last_name varchar(30) NOT NULL,
+//   username varchar(50) NOT NULL,
+//   passwordHash varchar(50) NOT NULL,
+//   email varchar(50),
+//   PRIMARY KEY ("id")
+// );`;
 
 // const userInsertText = `INSERT INTO app_user VALUES (
 //   'veryunique',
@@ -70,7 +71,7 @@ const seedDataBase = (): void => {
     .connect()
     .then(() => console.log('succesfully connected!'))
     .catch((err) => console.log('error with connecting to client:', err));
-  client.query(tableCreationText, (err, _res) => {
+  client.query(tableCreationStatements, (err, _res) => {
     if (err) throw err;
     console.log('Created database!');
     client.end().catch((err) => console.log(err));

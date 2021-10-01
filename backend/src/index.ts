@@ -1,13 +1,12 @@
 import express, { json } from 'express';
 import userRouter from './routers/user';
 import houseRouter from './routers/house';
-import databaseHelper from './databaseHelper';
+import databaseHelper from '../databse/databaseHelper';
 import config from './config';
 
 const app = express();
 const port = config.port;
 
-// databaseHelper.testDbConnection();
 databaseHelper.seedDataBase();
 
 app.use(json());
