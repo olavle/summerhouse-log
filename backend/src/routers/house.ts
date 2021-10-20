@@ -1,7 +1,9 @@
 import express from 'express';
-import houseData from '../dummydata/houseData';
-import { validateNewHouse } from '../utils';
+import houseData from '../database/dummydata/houseData';
 import houseService from '../services/houseService';
+import { userIsLoggedIn } from '../utils/authChecker';
+import { parseNewHouse } from '../utils/dataParsers';
+import jwtHelper from '../utils/jwtHelper';
 
 const router = express.Router();
 
@@ -20,17 +22,27 @@ router.get('/:id', (req, res) => {
 });
 
 // Add new house
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
   try {
-    const newHouse = validateNewHouse(req.body);
-    const addedHouse = houseService.addHouse(newHouse);
-    res.status(201).json(addedHouse);
-  // Disabled elsint to access error message
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    res.status(500).json({
-      error: `${error.message}`,
+    const token = <string>req.cookies.token;
+    if (userIsLoggedIn(req.cookies.token)) {
+      const user = jwtHelper.decodeUser(token);
+      const houseToAdd = parseNewHouse({
+        ...req.body,
+        adminId: user.id,
+      });
+      houseService.addHouse(houseToAdd).catch((err) => {
+        throw err;
+      });
+      res.status(201).json({
+        message: 'Added new house!',
+      });
+    }
+    res.status(401).json({
+      message: 'Please login'
     });
+  } catch (error) {
+    next(error);
   }
 });
 

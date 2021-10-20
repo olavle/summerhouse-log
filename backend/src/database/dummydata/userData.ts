@@ -1,4 +1,4 @@
-import { User } from "../types";
+import { User } from "../../types";
 
 const users: User[] = [
   {
@@ -7,6 +7,7 @@ const users: User[] = [
     lname: 'User',
     username: 'testuser',
     password: 'testuser',
+    role: 'User',
   },
   {
     id: '2',
@@ -14,6 +15,7 @@ const users: User[] = [
     lname: 'Doe',
     username: 'johndoe',
     password: 'johndoe',
+    role: 'User',
   },
 ];
 

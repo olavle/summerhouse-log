@@ -1,26 +1,25 @@
 import { NewUser, User } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import userData from '../dummydata/userData';
-import databaseHelper from '../../databse/databaseHelper';
+import databaseHelper from '../database/databaseHelper';
+import bcrypt from 'bcrypt';
 
-const addUser = (user: NewUser): User => {
+const saltRounds = 10;
+
+const addUser = async (user: NewUser): Promise<User> => {
   const id = uuidv4();
+  const passHash = await bcrypt.hash(user.password, saltRounds);
   const userToAdd: User = {
     id,
     ...user,
-    linkedHouses: [],
-    housesUserAdmins: []
+    password: passHash,
   };
-  databaseHelper.addUserToDb(userToAdd);
-
-  userData.push(userToAdd);
+  await databaseHelper.addUserToDb(userToAdd);
   return userToAdd;
 };
 
-const getAllUsers = (): User[] => {
-  return userData;
+const getAllUsers = async (): Promise<User[]> => {
+  return await databaseHelper.getAllUsers();
 };
-
 
 // TODO: make this correlate with db relations
 const linkHouseToUser = (user: User, houseId: string): User => {

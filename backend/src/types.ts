@@ -5,30 +5,45 @@ export interface User {
   username: string;
   password: string;
   email?: string;
+  role: UserRole;
   linkedHouses?: HouseForUser[];
   housesUserAdmins?: HouseForUser[];
 }
 
+export type UserForJwt = Omit<User, 'password'>;
+
+export interface LoginUser {
+  username: string;
+  password: string;
+  keepLoggedIn: boolean;
+}
+
+export type UserRole = 'User' | 'Admin';
+
 export type NewUser = Omit<User, 'id'>;
+
+export type LoggedInUser = Pick<User, 'username'>;
 
 interface BaseInfo {
   id: string;
-  userWhoAdded: string;
+  userWhoAddedId: string;
 }
 
-export interface House extends BaseInfo {
+export interface House {
+  id: string;
+  adminId: string;
   name: string;
   address?: string;
   maxResidents?: number;
-  image?: string;
+  imageUrl?: string;
   timestamp: string;
   users: UserForHouse[];
 }
 
 export type NewHouse = Omit<House, 'id'>;
 
-type HouseForUser = Pick<House, 'id'>;
-type UserForHouse = Pick<User, 'id'>;
+export type HouseForUser = Pick<House, 'id'>;
+export type UserForHouse = Pick<User, 'id'>;
 
 export interface NewHouseFields {
   name: unknown;
@@ -39,14 +54,19 @@ export interface NewHouseFields {
 export interface Message extends BaseInfo {
   content: string;
   timestamp: string;
+  houseId: string;
 }
 
-export interface MessageReply extends Message {
-  originalMessage: string;
+export interface MessageReply extends BaseInfo {
+  content: string;
+  timestamp: string;
+  originalMessageId: string;
 }
 
 export interface Reservation extends BaseInfo {
-  startingDate: Date;
+  houseId: string;
+  participantAmount?: number;
+  startingDate: string;
   endingDate: string;
   comment?: string;
   isDecided: boolean;
@@ -54,5 +74,7 @@ export interface Reservation extends BaseInfo {
 
 export interface Shortage extends BaseInfo {
   content: string;
+  isResolved: boolean;
   timestamp: string;
+  houseId: string;
 }

@@ -10,4 +10,5 @@ export default {
     pw: process.env.POSTGRESQL_PW,
     port: process.env.POSTGRESQL_PORT,
   },
+  jwt_secret: process.env.JWT_SECRET,
 };
