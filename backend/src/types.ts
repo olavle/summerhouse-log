@@ -18,6 +18,16 @@ export interface LoginUser {
   keepLoggedIn: boolean;
 }
 
+export interface EditableUserBasicInfo {
+  fname?: string;
+  lname?: string;
+  email?: string;
+}
+
+export interface EditableUserPassword {
+  password: string;
+}
+
 export type UserRole = 'User' | 'Admin';
 
 export type NewUser = Omit<User, 'id'>;

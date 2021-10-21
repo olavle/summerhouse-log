@@ -14,7 +14,7 @@ const encodeUser = (user: UserForJwt): string => {
 
 const decodeUser = (jwt: string): UserForJwt => {
   if (!jwt) {
-    throw new Error('No token');
+    throw new Error('no-token');
   }
   return jwtDecode(jwt);
 };

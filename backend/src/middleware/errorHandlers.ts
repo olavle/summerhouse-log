@@ -6,7 +6,7 @@ export const errorLogger = (
   _res: Response,
   next: NextFunction
 ): void => {
-  console.error(error);
+  console.error('ErrorLogger:', error);
   next(error);
 };
 
@@ -16,22 +16,13 @@ export const errorResponder = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.log(
-    'hello from errorResponder with error:',
-    error,
-    'the error message:',
-    error.message,
-    'and error name:',
-    error.name
-  );
   if (error.message === 'parse-fail') {
     console.log('Data parser failed');
     res.status(400).json({
-      message: 'Problem with input'
+      error: 'Problem with input',
     });
   }
   if (error.message === 'no-user' || error.message === 'no-password') {
-    console.log('error.name:', error.name);
     console.log('Failed login attempt from:', req.socket.remoteAddress);
     res.status(400).json({
       error: 'Incorrect credentials',
@@ -42,9 +33,9 @@ export const errorResponder = (
       error: 'The username already exists',
     });
   }
-  if (error.name === 'InvalidTokenError') {
+  if (error.name === 'InvalidTokenError' || error.message === 'no-token') {
     res.status(401).json({
-      message: 'Please login',
+      error: 'Please login',
     });
   } else {
     next(error);

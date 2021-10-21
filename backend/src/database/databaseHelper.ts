@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import config from '../config';
-import { House, User } from '../types';
+import { EditableUserBasicInfo, House, User } from '../types';
 import { parseUserFromDb } from '../utils/dataParsers';
 import {
   tableCreationStatements,
@@ -125,6 +125,18 @@ const addUserToDb = async ({
   // return 'hello';
 };
 
+const editUserBasicInfo = async (
+  id: string,
+  { fname, lname, email }: EditableUserBasicInfo
+): Promise<void> => {
+  const result = await pool.query(`
+  UPDATE app_user SET first_name = '${fname}', last_name = '${lname}', email = '${email}' WHERE app_user_id = '${id}';
+  `);
+  if (result.rowCount === 0) {
+    throw new Error('no-user');
+  }
+};
+
 const getAllUsers = async (): Promise<User[]> => {
   console.log('Called getAllUsers in databasehelper');
   const response = await pool.query(
@@ -148,6 +160,25 @@ const getUserByUsername = async (username: string): Promise<User> => {
   return parseUserFromDb(response.rows[0]);
 };
 
+const getUserById = async (id: string): Promise<User> => {
+  const response = await pool.query(`
+      SELECT * FROM app_user WHERE app_user_id = '${id}';
+    `);
+  if (response.rows[0] === undefined) {
+    throw new Error('no-user');
+  }
+  return parseUserFromDb(response.rows[0]);
+};
+
+const getUserByIdWithHousesTheyHaveAccessTo = async (id: string): Promise<void> => {
+  const response = await pool.query(`
+  SELECT app_user.*, house.* FROM app_user
+  RIGHT JOIN houses_user_has_access_to ON (houses_user_has_access_to.user_id = app_user.app_user_id)
+  RIGHT JOIN house ON (house.house_id = houses_user_has_access_to.house_id) WHERE app_user_id = '${id}';
+  `);
+  console.log('getUserByIdWithHouses', response.rows);
+};
+
 export default {
   seedDataBase,
   addUserToDb,
@@ -155,4 +186,7 @@ export default {
   getAllUsers,
   getUserByUsername,
   addHouseToDb,
+  getUserById,
+  editUserBasicInfo,
+  getUserByIdWithHousesTheyHaveAccessTo,
 };

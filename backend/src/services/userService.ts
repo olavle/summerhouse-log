@@ -1,4 +1,4 @@
-import { NewUser, User } from '../types';
+import { EditableUserBasicInfo, NewUser, User } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import databaseHelper from '../database/databaseHelper';
 import bcrypt from 'bcrypt';
@@ -17,6 +17,27 @@ const addUser = async (user: NewUser): Promise<User> => {
   return userToAdd;
 };
 
+const editUserBasicInfo = async (id: string, data: EditableUserBasicInfo): Promise<User> => {
+  const user = await databaseHelper.getUserById(id);
+  await databaseHelper.editUserBasicInfo(user.id, data);
+  const editedUser = {
+    ...user,
+    ...data
+  };
+  return editedUser;
+};
+
+const getUserWithHouses = async (id: string): Promise<void> => {
+  await databaseHelper.getUserByIdWithHousesTheyHaveAccessTo(id);
+};
+
+// const changeUserPassword = async (id: string, newPass: string): Promise<void> => {
+//   const user = await databaseHelper.getUserById(id);
+//   console.log('The user is:', user);
+//   console.log('The new password is', newPass);
+//   const hashedPass = await bcrypt.hash(newPass, saltRounds);
+// };
+
 const getAllUsers = async (): Promise<User[]> => {
   return await databaseHelper.getAllUsers();
 };
@@ -33,4 +54,6 @@ export default {
   addUser,
   getAllUsers,
   linkHouseToUser,
+  editUserBasicInfo,
+  getUserWithHouses,
 };

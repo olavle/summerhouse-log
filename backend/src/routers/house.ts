@@ -1,7 +1,6 @@
 import express from 'express';
 import houseData from '../database/dummydata/houseData';
 import houseService from '../services/houseService';
-import { userIsLoggedIn } from '../utils/authChecker';
 import { parseNewHouse } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
 
@@ -25,21 +24,17 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res, next) => {
   try {
     const token = <string>req.cookies.token;
-    if (userIsLoggedIn(req.cookies.token)) {
-      const user = jwtHelper.decodeUser(token);
-      const houseToAdd = parseNewHouse({
-        ...req.body,
-        adminId: user.id,
-      });
-      houseService.addHouse(houseToAdd).catch((err) => {
-        throw err;
-      });
-      res.status(201).json({
-        message: 'Added new house!',
-      });
-    }
-    res.status(401).json({
-      message: 'Please login'
+
+    const user = jwtHelper.decodeUser(token);
+    const houseToAdd = parseNewHouse({
+      ...req.body,
+      adminId: user.id,
+    });
+    houseService.addHouse(houseToAdd).catch((err) => {
+      throw err;
+    });
+    res.status(201).json({
+      message: 'Added new house!',
     });
   } catch (error) {
     next(error);

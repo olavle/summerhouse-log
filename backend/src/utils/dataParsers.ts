@@ -1,4 +1,14 @@
-import { LoginUser, NewHouse, NewUser, User, UserForHouse, UserRole } from '../types';
+import {
+  EditableUserBasicInfo,
+  EditableUserPassword,
+  LoginUser,
+  NewHouse,
+  NewUser,
+  User,
+  UserForHouse,
+  UserForJwt,
+  UserRole,
+} from '../types';
 import dayjs from 'dayjs';
 
 const isString = (param: unknown): param is string => {
@@ -96,17 +106,65 @@ const parseRoleForDbUser = (role: unknown): UserRole => {
   return role;
 };
 
-const parseUserIdList = (list: unknown): UserForHouse[] => {
+const parseUserForHouseIdList = (list: unknown): UserForHouse[] => {
   if (!list || !Array.isArray(list)) {
     throw new Error(`parse-fail`);
   }
-  const finalList = list.map(item => { // check if item is type of HouseForUser
-    return { 
-      id: parseString(item.id)
+  const finalList = list.map((item) => {
+    // check if item is type of HouseForUser
+    return {
+      id: parseString(item.id),
     };
   });
   return finalList;
 };
+
+// const parseOptionalUserForHouseIdList = (list: unknown): UserForHouse[] | undefined => {
+//   if (!list) {
+//     return undefined;
+//   }
+//   if (!Array.isArray(list)) {
+//     throw new Error(`parse-fail`);
+//   }
+//   const finalList = list.map(item => {
+//     // check if item is type of HouseForUser
+//     return {
+//       id: parseString(item.id),
+//     };
+//   });
+//   return finalList;
+// };
+
+// const parseHouseForUserIdList = (list: unknown): HouseForUser[] => {
+//   if (!list || !Array.isArray(list)) {
+//     throw new Error(`parse-fail`);
+//   }
+//   const finalList = list.map((item) => {
+//     // check if item is type of HouseForUser
+//     return {
+//       id: parseString(item.id),
+//     };
+//   });
+//   return finalList;
+// };
+
+// const parseOptionalHouseForUserIdList = (
+//   list: unknown
+// ): HouseForUser[] | undefined => {
+//   if (!list) {
+//     return undefined;
+//   }
+//   if (!Array.isArray(list)) {
+//     throw new Error(`parse-fail`);
+//   }
+//   const finalList = list.map((item) => {
+//     // check if item is type of HouseForUser
+//     return {
+//       id: parseString(item.id),
+//     };
+//   });
+//   return finalList;
+// };
 
 // Disable eslint for the 'any' error to access obj properly
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,6 +212,28 @@ export const parseUserFromDb = (obj: any): User => {
 
 // Disable eslint for the 'any' error to access obj properly
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseUserToEdit = (obj: any, originalUser: UserForJwt): EditableUserBasicInfo => {
+  console.log('Hello from parseUserToEdit');
+  const editable: EditableUserBasicInfo = {
+    fname: parseOptionalString(obj.fname) || parseString(originalUser.fname),
+    lname: parseOptionalString(obj.lname) || parseString(originalUser.lname),
+    email: parseOptionalString(obj.email) || parseString(originalUser.email),
+  };
+  return editable;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseUserPasswordToEdit = (obj: any): EditableUserPassword => {
+  console.log('Hello from parseUserPasswordToEdit');
+  const editable: EditableUserPassword = {
+    password: parseString(obj.password),
+  };
+  return editable;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const parseNewHouse = (obj: any): NewHouse => {
   console.log('Hello from parseNewHouse');
   const newHouse: NewHouse = {
@@ -161,9 +241,9 @@ export const parseNewHouse = (obj: any): NewHouse => {
     name: parseString(obj.name),
     address: parseOptionalString(obj.address),
     maxResidents: parseOptionalNumber(obj.maxResidents),
-    users: parseUserIdList(obj.users),
+    users: parseUserForHouseIdList(obj.users),
     timestamp: parseDate(dayjs(new Date())),
-    imageUrl: parseOptionalString(obj.imageUrl)
+    imageUrl: parseOptionalString(obj.imageUrl),
   };
 
   return newHouse;

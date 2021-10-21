@@ -1,30 +1,24 @@
 import express from 'express';
 import userService from '../services/userService';
-import { userIsLoggedIn, userisAdmin } from '../utils/authChecker';
-import { parseNewUser } from '../utils/dataParsers';
+import { userisAdmin } from '../utils/authChecker';
+import { parseNewUser, parseUserToEdit } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
 
 const router = express.Router();
 
 // get all users
 router.get('/', (req, res, next) => {
-  if (userIsLoggedIn(req.cookies.token)) {
-    const decodedUser = jwtHelper.decodeUser(req.cookies.token);
-    if (userisAdmin(decodedUser)) {
-      userService
-        .getAllUsers()
-        .then((result) => {
-          res.status(200).json(result);
-        })
-        .catch((err) => next(err));
-    } else {
-      res.status(401).json({
-        message: 'No authorization',
-      });
-    }
+  const decodedUser = jwtHelper.decodeUser(req.cookies.token);
+  if (userisAdmin(decodedUser)) {
+    userService
+      .getAllUsers()
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((err) => next(err));
   } else {
     res.status(401).json({
-      message: 'Please login',
+      message: 'No authorization',
     });
   }
 });
@@ -42,6 +36,33 @@ router.post('/', (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+});
+
+// Edit existing user
+router.put('/editBasicInfo', (req, res, next) => {
+  const userFromJwt = jwtHelper.decodeUser(req.cookies.token);
+  const userChanges = parseUserToEdit(req.body, userFromJwt);
+  userService
+    .editUserBasicInfo(userFromJwt.id, userChanges)
+    .then(() => {
+      res.status(200).end();
+    })
+    .catch((err) => next(err));
+});
+
+// Change password
+// router.put('/changePassword', (req, res, next) => {
+//   const userFromJwt = jwtHelper.decodeUser(req.cookies.token);
+//   const newPass = parseUserPasswordToEdit(req.body);
+
+// });
+
+// Get user by id with houses
+router.get('/userWithHouses', (req, res, next) => {
+  const user = jwtHelper.decodeUser(req.cookies.token);
+  userService.getUserWithHouses(user.id).then(() => {
+    res.end();
+  }).catch((err) => next(err));
 });
 
 // Get user by ID
