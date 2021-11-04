@@ -37,6 +37,27 @@ export const errorResponder = (
     res.status(401).json({
       error: 'Please login',
     });
+  }
+  if (error.message === 'db-error') {
+    console.log('There was an error with the database');
+    res.status(400).json({
+      error: 'Database error',
+    });
+  }
+  if (error.message === 'admin-error') {
+    res.status(401).json({
+      error: 'User is not admin for this house',
+    });
+  }
+  if (error.message === 'no-userToAdd') {
+    res.status(400).json({
+      error: 'No such user',
+    });
+  }
+  if (error.message === 'no-house') {
+    res.status(400).json({
+      error: 'No such house',
+    });
   } else {
     next(error);
   }

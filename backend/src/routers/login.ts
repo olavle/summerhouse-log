@@ -2,7 +2,7 @@ import express from 'express';
 import dayjs from 'dayjs';
 import loginService from '../services/loginService';
 import { parseLogin } from '../utils/dataParsers';
-import { userIsLoggedIn } from '../utils/authChecker';
+import { userIsLoggedIn } from '../utils/userChecker';
 
 const router = express.Router();
 

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS house (
   address varchar(255) NOT NULL,
   max_residents int,
   image_url varchar(255),
-  creation_date date NOT NULL,
+  creation_date varchar(255) NOT NULL,
   PRIMARY KEY (house_id),
   FOREIGN KEY (admin_id) REFERENCES app_user(app_user_id) ON DELETE CASCADE
 );
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS message (
   author_id varchar(255) NOT NULL,
   house_id varchar(255) NOT NULL,
   content varchar(1024) NOT NULL,
-  timestamp date NOT NULL,
+  timestamp varchar(255) NOT NULL,
   PRIMARY KEY (message_id),
   FOREIGN KEY (author_id) REFERENCES app_user(app_user_id) ON DELETE CASCADE,
   FOREIGN KEY (house_id) REFERENCES house(house_id) ON DELETE CASCADE
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS message_reply (
   author_id varchar(255) NOT NULL,
   reply_to_id varchar(255) NOT NULL,
   content varchar(1024) NOT NULL,
-  timestamp date NOT NULL,
+  timestamp varchar(255) NOT NULL,
   PRIMARY KEY (message_reply_id),
   FOREIGN KEY (author_id) REFERENCES app_user(app_user_id) ON DELETE CASCADE,
   FOREIGN KEY (reply_to_id) REFERENCES message(message_id) ON DELETE CASCADE
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS shortage (
   house_id varchar(255) NOT NULL,
   content varchar(1024) NOT NULL,
   resolved BOOLEAN NOT NULL,
-  timestamp date NOT NULL,
+  timestamp varchar(255) NOT NULL,
   PRIMARY KEY (shortage_id),
   FOREIGN KEY (author_id) REFERENCES app_user(app_user_id) ON DELETE CASCADE,
   FOREIGN KEY (house_id) REFERENCES house(house_id) ON DELETE CASCADE
@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS reservation (
   reservator_id varchar(255),
   house_id varchar(255),
   participant_amount int,
-  start_time date NOT NULL,
-  end_time date NOT NULL,
+  start_time varchar(255) NOT NULL,
+  end_time varchar(255) NOT NULL,
   comment varchar(255),
   is_final BOOLEAN NOT NULL,
   PRIMARY KEY (reservation_id),

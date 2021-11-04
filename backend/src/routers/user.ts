@@ -1,6 +1,6 @@
 import express from 'express';
 import userService from '../services/userService';
-import { userisAdmin } from '../utils/authChecker';
+import { userisAdmin } from '../utils/userChecker';
 import { parseNewUser, parseUserToEdit } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
 

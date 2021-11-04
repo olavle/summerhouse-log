@@ -44,7 +44,7 @@ export interface House {
   adminId: string;
   name: string;
   address?: string;
-  maxResidents?: number;
+  maxResidents: number;
   imageUrl?: string;
   timestamp: string;
   users: UserForHouse[];
@@ -75,12 +75,14 @@ export interface MessageReply extends BaseInfo {
 
 export interface Reservation extends BaseInfo {
   houseId: string;
-  participantAmount?: number;
+  participantAmount: number;
   startingDate: string;
   endingDate: string;
   comment?: string;
   isDecided: boolean;
 }
+
+export type NewReservation = Omit<Reservation, 'id'>;
 
 export interface Shortage extends BaseInfo {
   content: string;
@@ -88,3 +90,5 @@ export interface Shortage extends BaseInfo {
   timestamp: string;
   houseId: string;
 }
+
+export type NewShortage = Omit<Shortage, 'id'>;

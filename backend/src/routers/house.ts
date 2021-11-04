@@ -1,7 +1,7 @@
 import express from 'express';
 import houseData from '../database/dummydata/houseData';
 import houseService from '../services/houseService';
-import { parseNewHouse } from '../utils/dataParsers';
+import { parseNewHouse, parseString } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
 
 const router = express.Router();
@@ -15,30 +15,64 @@ router.get('/', (_req, res) => {
 // Get house by id
 router.get('/:id', (req, res) => {
   const id = req.params.id;
-  console.log('Called one house with id', id);
-  const toReturn = houseData.filter((house) => house.id === id);
-  res.json(toReturn);
+  houseService
+    .getAllHouseDataById(id)
+    .then((data) => {
+      res.status(200).json({
+        data
+      });
+    })
+    .catch((err) => console.log(err));
 });
 
 // Add new house
 router.post('/', (req, res, next) => {
-  try {
-    const token = <string>req.cookies.token;
+  const token = <string>req.cookies.token;
+  const user = jwtHelper.decodeUser(token);
+  const houseToAdd = parseNewHouse({
+    ...req.body,
+    adminId: user.id,
+  });
+  houseToAdd.users.push({
+    id: user.id,
+  });
+  houseService
+    .addHouse(houseToAdd)
+    .then((result) => {
+      res.status(201).json({
+        message: 'Added a new house!',
+        houseAdded: result,
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
 
-    const user = jwtHelper.decodeUser(token);
-    const houseToAdd = parseNewHouse({
-      ...req.body,
-      adminId: user.id,
-    });
-    houseService.addHouse(houseToAdd).catch((err) => {
-      throw err;
-    });
-    res.status(201).json({
-      message: 'Added new house!',
-    });
-  } catch (error) {
-    next(error);
-  }
+// Grant user the access to a house
+router.post('/:id', (req, res, next) => {
+  const houseId = req.params.id;
+  const admin = jwtHelper.decodeUser(req.cookies.token);
+  const userToAddId = parseString(req.body.id);
+  houseService
+    .addUserToHouse(admin.id, userToAddId, houseId)
+    .then(() => {
+      res.status(201).json({
+        message: `Succesfully added user with id: ${userToAddId}`,
+      });
+    })
+    .catch((err) => next(err));
+});
+
+
+// TODO: make it work in the DB end - gives error of foreign key constraint
+// Remove house
+router.delete('/:id', (req, res, next) => {
+  const houseId = req.params.id;
+  const user = jwtHelper.decodeUser(req.cookies.token);
+  houseService.deleteHouse(houseId, user.id).then(() => {
+    res.end();
+  }).catch(err => next(err));
 });
 
 export default router;
