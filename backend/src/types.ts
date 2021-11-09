@@ -62,9 +62,9 @@ export interface NewHouseFields {
 }
 
 export interface Message extends BaseInfo {
-  content: string;
-  timestamp: string;
   houseId: string;
+  content: string;
+  timestamp: string; // TODO: See if this should be typeof Date
 }
 
 export interface MessageReply extends BaseInfo {
@@ -92,3 +92,5 @@ export interface Shortage extends BaseInfo {
 }
 
 export type NewShortage = Omit<Shortage, 'id'>;
+export type NewMessage = Omit<Message, 'id'>;
+export type NewMessageReply = Omit<MessageReply, 'id'>;

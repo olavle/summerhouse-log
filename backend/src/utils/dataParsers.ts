@@ -3,7 +3,11 @@ import {
   EditableUserPassword,
   House,
   LoginUser,
+  Message,
+  MessageReply,
   NewHouse,
+  NewMessage,
+  NewMessageReply,
   NewReservation,
   NewShortage,
   NewUser,
@@ -345,4 +349,58 @@ export const parseNewShortage = (obj: any): NewShortage => {
     timestamp: parseDate(dayjs().locale('fi').format())
   };
   return shortage;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseMessageFromDb = (obj: any): Message => {
+  console.log('Hello from parseMessageFromDb');
+  const message: Message = {
+    id: parseString(obj.message_id),
+    userWhoAddedId: parseString(obj.author_id),
+    houseId: parseString(obj.house_id),
+    content: parseString(obj.content),
+    timestamp: parseDate(obj.timestamp),
+  };
+  return message;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseNewMessage = (obj: any): NewMessage => {
+  console.log('Hello from parseNewMessage');
+  const message: NewMessage = {
+    userWhoAddedId: parseString(obj.userWhoAddedId),
+    houseId: parseString(obj.houseId),
+    content: parseString(obj.content),
+    timestamp: parseDate(dayjs().locale('fi').format()),
+  };
+  return message;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseNewReply = (obj: any): NewMessageReply => {
+  console.log('Hello from parseNewNewReply');
+  const reply: NewMessageReply = {
+    userWhoAddedId: parseString(obj.userWhoAddedId),
+    originalMessageId: parseString(obj.originalMessageId),
+    content: parseString(obj.content),
+    timestamp: parseDate(dayjs().locale('fi').format()),
+  };
+  return reply;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseReplyFromDb = (obj: any): MessageReply => {
+  console.log('Hello from parseNewNewReply');
+  const reply: MessageReply = {
+    id: parseString(obj.message_reply_id),
+    userWhoAddedId: parseString(obj.author_id),
+    originalMessageId: parseString(obj.reply_to_id),
+    content: parseString(obj.content),
+    timestamp: parseDate(obj.timestamp),
+  };
+  return reply;
 };

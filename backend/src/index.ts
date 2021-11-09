@@ -4,6 +4,7 @@ import houseRouter from './routers/house';
 import loginRouter from './routers/login';
 import reservationRouter from './routers/reservation';
 import shortageRouter from './routers/shortage';
+import messageRouter from './routers/message';
 import cookieParser from 'cookie-parser';
 import config from './config';
 import { errorLogger, errorResponder, generalError, unknownEndpoint } from './middleware/errorHandlers';
@@ -31,6 +32,7 @@ app.use('/api/users', userRouter);
 app.use('/api/houses', houseRouter);
 app.use('/api/reservations', reservationRouter);
 app.use('/api/shortages', shortageRouter);
+app.use('/api/messages', messageRouter);
 
 // Error handlers
 app.use(errorLogger);

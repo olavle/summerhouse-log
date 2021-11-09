@@ -1,12 +1,22 @@
 import { Pool } from 'pg';
 import config from '../config';
-import { EditableUserBasicInfo, House, Reservation, Shortage, User } from '../types';
+import {
+  EditableUserBasicInfo,
+  House,
+  Message,
+  MessageReply,
+  Reservation,
+  Shortage,
+  User,
+} from '../types';
 import {
   parseUserFromDb,
   parseHouseFromDb,
   parseString,
   parseReservationFromDb,
   parseShortageFromDb,
+  parseMessageFromDb,
+  parseReplyFromDb,
 } from '../utils/dataParsers';
 import {
   tableCreationStatements,
@@ -326,33 +336,37 @@ const createNewReservation = async ({
   `);
 };
 
-const getAllReservationsForHouseId = async (houseId: string): Promise<Reservation[]> => {
+const getAllReservationsForHouseId = async (
+  houseId: string
+): Promise<Reservation[]> => {
   const result = await pool.query(`
     SELECT * FROM reservation WHERE house_id = '${houseId}';
   `);
-  const allReservations = result.rows.map(item => {
+  const allReservations = result.rows.map((item) => {
     return parseReservationFromDb(item);
   });
   return allReservations;
 };
 
-const getShortagesWithHouseId = async (houseId: string): Promise<Shortage[]> => {
+const getShortagesWithHouseId = async (
+  houseId: string
+): Promise<Shortage[]> => {
   const result = await pool.query(`
   SELECT * FROM shortage WHERE house_id = '${houseId}';
   `);
-  const shortages = result.rows.map(item => {
+  const shortages = result.rows.map((item) => {
     return parseShortageFromDb(item);
   });
   return shortages;
 };
 
 const addNewShortageToDb = async ({
-id,
-userWhoAddedId,
-houseId,
-content,
-isResolved,
-timestamp
+  id,
+  userWhoAddedId,
+  houseId,
+  content,
+  isResolved,
+  timestamp,
 }: Shortage): Promise<void> => {
   await pool.query(`
   INSERT INTO shortage VALUES (
@@ -364,6 +378,66 @@ timestamp
     '${timestamp}'
   );
   `);
+};
+
+const getMessagesForHouseIdFromDb = async (
+  houseId: string
+): Promise<Message[]> => {
+  const result = await pool.query(`
+    SELECT * FROM message WHERE house_id='${houseId}';
+  `);
+  const results = result.rows.map((item) => {
+    return parseMessageFromDb(item);
+  });
+  return results;
+};
+
+const addNewMessageToDb = async ({
+  id,
+  userWhoAddedId,
+  houseId,
+  content,
+  timestamp,
+}: Message): Promise<void> => {
+  await pool.query(`
+  INSERT INTO message VALUES (
+    '${id}',
+    '${userWhoAddedId}',
+    '${houseId}',
+    '${content}',
+    '${timestamp}'
+  );
+  `);
+};
+
+const addNewReplyToDb = async ({
+  id,
+  userWhoAddedId,
+  content,
+  timestamp,
+  originalMessageId,
+}: MessageReply): Promise<void> => {
+  await pool.query(`
+    INSERT INTO message_reply VALUES (
+      '${id}',
+      '${userWhoAddedId}',
+      '${originalMessageId}',
+      '${content}',
+      '${timestamp}'
+    );
+  `);
+};
+
+const getRepliesForMessage = async (
+  messageId: string
+): Promise<MessageReply[]> => {
+  const result = await pool.query(`
+  SELECT * FROM message_reply WHERE reply_to_id = '${messageId}';
+  `);
+  const results = result.rows.map(item => {
+    return parseReplyFromDb(item);
+  });
+  return results;
 };
 
 export default {
@@ -383,4 +457,8 @@ export default {
   getAllReservationsForHouseId,
   getShortagesWithHouseId,
   addNewShortageToDb,
+  getMessagesForHouseIdFromDb,
+  addNewMessageToDb,
+  addNewReplyToDb,
+  getRepliesForMessage,
 };

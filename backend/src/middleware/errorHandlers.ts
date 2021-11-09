@@ -69,7 +69,9 @@ export const generalError = (
   res: Response,
   next: NextFunction
 ) => {
-  res.status(500);
+  res.status(500).json({
+    message: 'Unknown error',
+  });
   next(error);
 };
 
