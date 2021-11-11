@@ -12,17 +12,64 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const houseData_1 = __importDefault(require("../database/dummydata/houseData"));
 const uuid_1 = require("uuid");
 const databaseHelper_1 = __importDefault(require("../database/databaseHelper"));
+const userChecker_1 = require("../utils/userChecker");
 const addHouse = (house) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = (0, uuid_1.v4)();
-    const houseToAdd = Object.assign({ id: id.toString() }, house);
-    yield databaseHelper_1.default.addHouseToDb(houseToAdd);
-    houseData_1.default.push(houseToAdd);
-    return houseToAdd;
+    try {
+        const id = (0, uuid_1.v4)();
+        let houseToAdd = Object.assign({ id }, house);
+        yield databaseHelper_1.default.addHouseToDb(houseToAdd);
+        const usersToAdd = [];
+        houseToAdd.users.forEach((item) => {
+            if (usersToAdd.filter((user) => user.id === item.id).length === 0) {
+                usersToAdd.push(item);
+            }
+        });
+        usersToAdd.forEach((user) => {
+            databaseHelper_1.default
+                .addUserToHouse(user.id, houseToAdd.id)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .catch((err) => {
+                console.log(err);
+                throw new Error(err.message);
+            });
+        });
+        houseToAdd = Object.assign(Object.assign({}, houseToAdd), { users: usersToAdd });
+        console.log('houseToadd:', houseToAdd);
+        return houseToAdd;
+    }
+    catch (error) {
+        throw new Error('db-error');
+    }
+});
+const addUserToHouse = (adminUserId, userToAddId, houseForUserId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const houseTheUserIsAddedTo = yield databaseHelper_1.default.getHouseById(houseForUserId);
+        if (houseTheUserIsAddedTo.adminId !== adminUserId) {
+            throw new Error('admin-error');
+        }
+        if (!(yield (0, userChecker_1.userExists)(userToAddId))) {
+            throw new Error('no-userToAdd');
+        }
+        // TODO check if the user already belongs to the house
+        yield databaseHelper_1.default.addUserToHouse(userToAddId, houseForUserId);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+});
+const getAllHouseDataById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databaseHelper_1.default.getHouseById(id);
+});
+const deleteHouse = (houseId, adminId) => __awaiter(void 0, void 0, void 0, function* () {
+    yield databaseHelper_1.default.removeHouseById(houseId, adminId);
 });
 exports.default = {
     addHouse,
+    addUserToHouse,
+    getAllHouseDataById,
+    deleteHouse,
 };
 //# sourceMappingURL=houseService.js.map

@@ -7,17 +7,30 @@ import shortageRouter from './routers/shortage';
 import messageRouter from './routers/message';
 import cookieParser from 'cookie-parser';
 import config from './config';
-import { errorLogger, errorResponder, generalError, unknownEndpoint } from './middleware/errorHandlers';
+import {
+  errorLogger,
+  errorResponder,
+  generalError,
+  unknownEndpoint,
+} from './middleware/errorHandlers';
 import jwtHelper from './utils/jwtHelper';
+import cors from 'cors';
 // import databaseHelper from './database/databaseHelper'; // Uncomment if need to seed database
 
 const app = express();
-const port = config.port;
+const port = process.env.PORT || config.port;
 
 // databaseHelper.seedDataBase(); // Uncomment if need to seed database
 
+app.use(cors());
 app.use(json());
 app.use(cookieParser());
+
+app.use('/api/ping', (_req, res, _next) => {
+  res.status(200).json({
+    message: 'Pong',
+  });
+});
 
 app.use('/api/login', loginRouter);
 

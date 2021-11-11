@@ -7,14 +7,11 @@ const express_1 = __importDefault(require("express"));
 const dayjs_1 = __importDefault(require("dayjs"));
 const loginService_1 = __importDefault(require("../services/loginService"));
 const dataParsers_1 = require("../utils/dataParsers");
-const jwtHelper_1 = __importDefault(require("../utils/jwtHelper"));
-const authChecker_1 = require("../utils/authChecker");
+const userChecker_1 = require("../utils/userChecker");
 const router = express_1.default.Router();
 // Login
 router.post('/', (req, res, next) => {
-    console.log('From login router userIsLoggedIn:', (0, authChecker_1.userIsLoggedIn)(req.cookies.token));
-    if (!(0, authChecker_1.userIsLoggedIn)(req.cookies.token)) {
-        console.log('Hello from user is logged in statsu: false');
+    if (!(0, userChecker_1.userIsLoggedIn)(req.cookies.token)) {
         const userFromInput = (0, dataParsers_1.parseLogin)(req.body);
         loginService_1.default
             .checkPassAndLogin(userFromInput)
@@ -23,7 +20,6 @@ router.post('/', (req, res, next) => {
             const tokenExpirty = userFromInput.keepLoggedIn
                 ? undefined
                 : (0, dayjs_1.default)().add(1, 'minute').toDate(); // change expirty to 1h
-            console.log('testing the jwt decode here! should return the user:', jwtHelper_1.default.decodeUser(jwt));
             res.cookie('token', jwt, {
                 secure: false,
                 httpOnly: true,
@@ -38,7 +34,7 @@ router.post('/', (req, res, next) => {
         });
     }
     else {
-        res.status(400).json({
+        res.status(200).json({
             message: 'User already logged in',
         });
     }

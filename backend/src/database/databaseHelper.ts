@@ -434,7 +434,7 @@ const getRepliesForMessage = async (
   const result = await pool.query(`
   SELECT * FROM message_reply WHERE reply_to_id = '${messageId}';
   `);
-  const results = result.rows.map(item => {
+  const results = result.rows.map((item) => {
     return parseReplyFromDb(item);
   });
   return results;

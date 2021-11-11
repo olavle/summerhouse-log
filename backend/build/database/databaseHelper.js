@@ -72,6 +72,78 @@ const addHouseToDb = ({ id, adminId, name, address, maxResidents, imageUrl, time
     );
   `);
 });
+const getHouseById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const houseFromDb = yield pool.query(`
+    SELECT * FROM house WHERE house_id = '${id}';
+    `);
+        const houseUsersFromDb = yield pool.query(`
+    SELECT app_user_id from app_user AS a_user
+    FULL JOIN house_users AS h_users
+    ON a_user.app_user_id = h_users.user_id
+    FULL JOIN house AS house
+    ON house.house_id = h_users.house_id WHERE h_users.house_id = '${id}';
+    `);
+        const usersForHouse = houseUsersFromDb.rows.map((user) => {
+            return {
+                id: (0, dataParsers_1.parseString)(user.app_user_id),
+            };
+        });
+        const fullHouseData = (0, dataParsers_1.parseHouseFromDb)(houseFromDb.rows[0], usersForHouse);
+        console.log(fullHouseData);
+        //   const response = await pool.query(`
+        // SELECT app_user_id from app_user AS u
+        // FULL JOIN house_users AS h_users
+        // ON u.app_user_id = h_users.user_id
+        // FULL JOIN house AS house
+        // ON h_users.house_id = house.house_id WHERE h_users.user_id = '${id}';
+        // `);
+        // vanha versio
+        //   const response = await pool.query(`
+        //   SELECT * from house AS house
+        //   FULL JOIN house_users AS h_users
+        //   ON house.house_id = h_users.house_id
+        //   FULL JOIN app_user AS a_user
+        //   ON a_user.app_user_id = h_users.user_id WHERE h_users.house_id = '${id}';
+        // `);
+        // const usersForHouse = response.rows.map(item => {
+        //   return {
+        //     id: parseString(item.user_id),
+        //   };
+        // });
+        // console.log(usersForHouse);
+        // const house = parseHouseFromDb({
+        //   house_id: response.rows[0].house_id,
+        //   admin_id: response.rows[0].admin_id,
+        //   name: response.rows[0].name,
+        //   address: response.rows[0].address,
+        //   max_residents: response.rows[0].max_residents,
+        //   users: usersForHouse,
+        // });
+        if (houseFromDb.rowCount === 0) {
+            throw new Error();
+        }
+        return fullHouseData;
+    }
+    catch (error) {
+        console.log(error);
+        throw new Error('no-house');
+    }
+});
+const removeHouseById = (houseId, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield pool.query(`
+  DELETE FROM house WHERE house_id = '${houseId}' AND admin_id = '${userId}';
+  `);
+    console.log(result);
+});
+const addUserToHouse = (user_id, house_id) => __awaiter(void 0, void 0, void 0, function* () {
+    yield pool.query(`
+  INSERT INTO house_users VALUES (
+    '${user_id}',
+    '${house_id}'
+  );
+  `);
+});
 // SELECT app_user.*, house.* FROM app_user RIGHT JOIN houses_user_has_access_to ON (houses_user_has_access_to.user_id = app_user.id) RIGHT JOIN house ON (house.id = houses_user_has_access_to.house_id);
 // const getAllUsersWithHouses = () => {
 //   pool
@@ -109,6 +181,14 @@ const addUserToDb = ({ id, fname, lname, username, password, email, role, }) => 
     //   // return parseUserFromDb(response.rows[0]);
     // return 'hello';
 });
+const editUserBasicInfo = (id, { fname, lname, email }) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield pool.query(`
+  UPDATE app_user SET first_name = '${fname}', last_name = '${lname}', email = '${email}' WHERE app_user_id = '${id}';
+  `);
+    if (result.rowCount === 0) {
+        throw new Error('no-user');
+    }
+});
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Called getAllUsers in databasehelper');
     const response = yield pool.query(`
@@ -128,6 +208,130 @@ const getUserByUsername = (username) => __awaiter(void 0, void 0, void 0, functi
     }
     return (0, dataParsers_1.parseUserFromDb)(response.rows[0]);
 });
+const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield pool.query(`
+      SELECT * FROM app_user WHERE app_user_id = '${id}';
+    `);
+    if (response.rows[0] === undefined) {
+        throw new Error('no-user');
+    }
+    return (0, dataParsers_1.parseUserFromDb)(response.rows[0]);
+});
+const getUserByIdWithHousesTheyHaveAccessTo = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    // Returns house info
+    // const response = await pool.query(`
+    // SELECT house.* FROM app_user
+    // RIGHT JOIN house_users ON (house_users.user_id = app_user.app_user_id)
+    // RIGHT JOIN house ON (house.house_id = house_users.house_id) WHERE app_user_id = '${id}';
+    // `);
+    // TODO: make it return also the users linked with the house?
+    const result = yield pool.query(`
+  SELECT * from house AS house
+  FULL JOIN house_users AS h_users
+  ON house.house_id = h_users.house_id
+  WHERE h_users.user_id = '${id}';
+  `);
+    // Return user, should return house info
+    // const response = await pool.query(`
+    // SELECT app_user_id from app_user AS u
+    // FULL JOIN house_users AS h_users
+    // ON u.app_user_id = h_users.user_id
+    // FULL JOIN house AS house
+    // ON h_users.house_id = house.house_id WHERE h_users.user_id = '${id}';
+    // `);
+    console.log('getUserByIdWithHouses', result.rows);
+});
+// https://www.sqlshack.com/sql-multiple-joins-for-beginners-with-examples/
+// Get all data of a house
+// SELECT * FROM house AS h
+// FULL JOIN house_users as hu
+// ON h.house_id = hu.house_id
+// FULL JOIN app_user AS a
+// ON hu.user_id = a.app_user_id WHERE hu.house_id = 'ID for eka mökki';
+const createNewReservation = ({ id, userWhoAddedId, houseId, participantAmount, startingDate, endingDate, comment, isDecided, }) => __awaiter(void 0, void 0, void 0, function* () {
+    yield pool.query(`
+  INSERT INTO reservation VALUES (
+    '${id}',
+    '${userWhoAddedId}',
+    '${houseId}',
+    '${participantAmount}',
+    '${startingDate}',
+    '${endingDate}',
+    '${comment}',
+    '${isDecided}'
+  );
+  `);
+});
+const getAllReservationsForHouseId = (houseId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield pool.query(`
+    SELECT * FROM reservation WHERE house_id = '${houseId}';
+  `);
+    const allReservations = result.rows.map((item) => {
+        return (0, dataParsers_1.parseReservationFromDb)(item);
+    });
+    return allReservations;
+});
+const getShortagesWithHouseId = (houseId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield pool.query(`
+  SELECT * FROM shortage WHERE house_id = '${houseId}';
+  `);
+    const shortages = result.rows.map((item) => {
+        return (0, dataParsers_1.parseShortageFromDb)(item);
+    });
+    return shortages;
+});
+const addNewShortageToDb = ({ id, userWhoAddedId, houseId, content, isResolved, timestamp, }) => __awaiter(void 0, void 0, void 0, function* () {
+    yield pool.query(`
+  INSERT INTO shortage VALUES (
+    '${id}',
+    '${userWhoAddedId}',
+    '${houseId}',
+    '${content}',
+    '${isResolved}',
+    '${timestamp}'
+  );
+  `);
+});
+const getMessagesForHouseIdFromDb = (houseId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield pool.query(`
+    SELECT * FROM message WHERE house_id='${houseId}';
+  `);
+    const results = result.rows.map((item) => {
+        return (0, dataParsers_1.parseMessageFromDb)(item);
+    });
+    return results;
+});
+const addNewMessageToDb = ({ id, userWhoAddedId, houseId, content, timestamp, }) => __awaiter(void 0, void 0, void 0, function* () {
+    yield pool.query(`
+  INSERT INTO message VALUES (
+    '${id}',
+    '${userWhoAddedId}',
+    '${houseId}',
+    '${content}',
+    '${timestamp}'
+  );
+  `);
+});
+const addNewReplyToDb = ({ id, userWhoAddedId, content, timestamp, originalMessageId, }) => __awaiter(void 0, void 0, void 0, function* () {
+    yield pool.query(`
+    INSERT INTO message_reply VALUES (
+      '${id}',
+      '${userWhoAddedId}',
+      '${originalMessageId}',
+      '${content}',
+      '${timestamp}'
+    );
+  `);
+});
+const getRepliesForMessage = (messageId) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield pool.query(`
+  SELECT * FROM message_reply WHERE reply_to_id = '${messageId}';
+  `);
+    const results = result.rows.map((item) => {
+        return (0, dataParsers_1.parseReplyFromDb)(item);
+    });
+    return results;
+});
 exports.default = {
     seedDataBase,
     addUserToDb,
@@ -135,5 +339,19 @@ exports.default = {
     getAllUsers,
     getUserByUsername,
     addHouseToDb,
+    getUserById,
+    editUserBasicInfo,
+    getUserByIdWithHousesTheyHaveAccessTo,
+    addUserToHouse,
+    getHouseById,
+    removeHouseById,
+    createNewReservation,
+    getAllReservationsForHouseId,
+    getShortagesWithHouseId,
+    addNewShortageToDb,
+    getMessagesForHouseIdFromDb,
+    addNewMessageToDb,
+    addNewReplyToDb,
+    getRepliesForMessage,
 };
 //# sourceMappingURL=databaseHelper.js.map

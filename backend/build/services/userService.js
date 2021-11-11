@@ -23,6 +23,21 @@ const addUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     yield databaseHelper_1.default.addUserToDb(userToAdd);
     return userToAdd;
 });
+const editUserBasicInfo = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield databaseHelper_1.default.getUserById(id);
+    yield databaseHelper_1.default.editUserBasicInfo(user.id, data);
+    const editedUser = Object.assign(Object.assign({}, user), data);
+    return editedUser;
+});
+const getUserWithHouses = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    yield databaseHelper_1.default.getUserByIdWithHousesTheyHaveAccessTo(id);
+});
+// const changeUserPassword = async (id: string, newPass: string): Promise<void> => {
+//   const user = await databaseHelper.getUserById(id);
+//   console.log('The user is:', user);
+//   console.log('The new password is', newPass);
+//   const hashedPass = await bcrypt.hash(newPass, saltRounds);
+// };
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield databaseHelper_1.default.getAllUsers();
 });
@@ -38,5 +53,7 @@ exports.default = {
     addUser,
     getAllUsers,
     linkHouseToUser,
+    editUserBasicInfo,
+    getUserWithHouses,
 };
 //# sourceMappingURL=userService.js.map

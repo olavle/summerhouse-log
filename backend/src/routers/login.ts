@@ -32,7 +32,7 @@ router.post('/', (req, res, next) => {
         next(err);
       });
   } else {
-    res.status(400).json({
+    res.status(200).json({
       message: 'User already logged in',
     });
   }

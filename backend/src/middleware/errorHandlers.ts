@@ -24,7 +24,7 @@ export const errorResponder = (
   }
   if (error.message === 'no-user' || error.message === 'no-password') {
     console.log('Failed login attempt from:', req.socket.remoteAddress);
-    res.status(400).json({
+    res.status(200).json({
       error: 'Incorrect credentials',
     });
   }
