@@ -20,7 +20,7 @@ router.post('/', (req, res, next) => {
 
         res.cookie('token', jwt, {
           secure: false, // this should later be changed
-          httpOnly: true,
+          httpOnly: false,
           expires: tokenExpirty,
         });
 

@@ -43,7 +43,7 @@ app.use((0, express_1.json)());
 app.use((0, cookie_parser_1.default)());
 app.use('/api/ping', (_req, res, _next) => {
     res.status(200).json({
-        message: 'Pong'
+        message: 'Pong',
     });
 });
 app.use('/api/login', login_1.default);
@@ -64,6 +64,6 @@ app.use(errorHandlers_1.errorResponder);
 app.use(errorHandlers_1.generalError);
 app.use(errorHandlers_1.unknownEndpoint);
 app.listen(port, () => {
-    console.log('listening to port', 3001);
+    console.log('listening to port', port);
 });
 //# sourceMappingURL=index.js.map

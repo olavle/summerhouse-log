@@ -6,10 +6,9 @@ import jwtHelper from '../utils/jwtHelper';
 
 const router = express.Router();
 
-// Get all houses
+// Get all houses for user
 router.get('/', (_req, res) => {
-  console.log('all houses called');
-  res.json(houseData);
+  
 });
 
 // Get house by id

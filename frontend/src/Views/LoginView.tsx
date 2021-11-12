@@ -10,12 +10,13 @@ import Cookies from 'js-cookie';
 // }
 
 const LoginView = () => {
-  const [{ isLoggedIn, username, userPassword, stayLoggedIn }, dispatch] =
-    useStateValue();
+  const [{ username, userPassword, stayLoggedIn }, dispatch] = useStateValue();
   // const [credentials, setCredentails] = React.useState<Credentials>({
   //   username: '',
   //   password: '',
   // });
+
+  // console.log('here is cookies.get', Cookies.get('token'))
 
   const handleUsernameChange: React.ChangeEventHandler<HTMLInputElement> = (
     event
@@ -42,13 +43,25 @@ const LoginView = () => {
     });
   };
 
-  const handleLogin = () => {
-    loginHelper.login({
-      username,
-      password: userPassword,
-      keepLoggedIn: stayLoggedIn,
-    });
-    console.log('here is cookies.get', Cookies.get('token'))
+  const handleLogin = async (): Promise<void> => {
+    try {
+      const loginResponse = await loginHelper.login({
+        username,
+        password: userPassword,
+        keepLoggedIn: stayLoggedIn,
+      });
+      if (loginResponse.message === 'Logged in!') {
+        console.log('logged in yes')
+        dispatch({
+          type: 'LOGIN',
+          payload: true
+        })
+      } else {
+        console.log('not logged in no')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (

@@ -18,11 +18,16 @@ import cors from 'cors';
 // import databaseHelper from './database/databaseHelper'; // Uncomment if need to seed database
 
 const app = express();
-const port = process.env.PORT || config.port;
+const port = config.port;
 
 // databaseHelper.seedDataBase(); // Uncomment if need to seed database
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
+
+}));
 app.use(json());
 app.use(cookieParser());
 
@@ -37,6 +42,7 @@ app.use('/api/login', loginRouter);
 // Middleware to check the user is logged in
 // Could it be possible to pass around the user info to every router via this function?
 app.use((req: Request, _res: Response, next: NextFunction) => {
+  console.log('Hello from logincheckingmiddleware, the req.cookies:', req.cookies.token);
   jwtHelper.decodeUser(req.cookies.token);
   next();
 });
@@ -54,5 +60,5 @@ app.use(generalError);
 app.use(unknownEndpoint);
 
 app.listen(port, () => {
-  console.log('listening to port', 3001);
+  console.log('listening to port', port);
 });
