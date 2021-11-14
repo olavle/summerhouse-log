@@ -1,4 +1,4 @@
-import { State } from '../types';
+import { House, State } from '../types';
 
 export type Action =
   | {
@@ -20,6 +20,10 @@ export type Action =
   | {
       type: 'STAY_LOGGEDIN';
       payload: boolean;
+    }
+  | {
+      type: 'HOUSES_FROM_DB';
+      payload: House[];
     };
 
 export const reducer = (state: State, action: Action): State => {
@@ -49,6 +53,11 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         stayLoggedIn: action.payload,
       };
+    case 'HOUSES_FROM_DB':
+      return {
+        ...state,
+        houses: action.payload,
+      };
     default:
       return state;
   }
@@ -65,5 +74,12 @@ export const logoutUser = (): Action => {
   return {
     type: 'LOGOUT',
     payload: false,
+  };
+};
+
+export const listHouses = (houses: any[]): Action => {
+  return {
+    type: 'HOUSES_FROM_DB',
+    payload: houses,
   };
 };

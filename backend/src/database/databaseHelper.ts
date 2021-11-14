@@ -277,7 +277,7 @@ const getUserById = async (id: string): Promise<User> => {
 
 const getUserByIdWithHousesTheyHaveAccessTo = async (
   id: string
-): Promise<void> => {
+): Promise<House[]> => {
   // Returns house info
   // const response = await pool.query(`
   // SELECT house.* FROM app_user
@@ -301,7 +301,10 @@ const getUserByIdWithHousesTheyHaveAccessTo = async (
   // FULL JOIN house AS house
   // ON h_users.house_id = house.house_id WHERE h_users.user_id = '${id}';
   // `);
-  console.log('getUserByIdWithHouses', result.rows);
+  const toReturn = result.rows.map(item => {
+    return parseHouseFromDb(item);
+  });
+  return toReturn;
 };
 
 // https://www.sqlshack.com/sql-multiple-joins-for-beginners-with-examples/

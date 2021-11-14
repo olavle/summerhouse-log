@@ -38,16 +38,15 @@ app.use('/api/ping', (_req, res, _next) => {
 });
 
 app.use('/api/login', loginRouter);
+app.use('/api/users', userRouter);
 
 // Middleware to check the user is logged in
 // Could it be possible to pass around the user info to every router via this function?
 app.use((req: Request, _res: Response, next: NextFunction) => {
-  console.log('Hello from logincheckingmiddleware, the req.cookies:', req.cookies.token);
   jwtHelper.decodeUser(req.cookies.token);
   next();
 });
 
-app.use('/api/users', userRouter);
 app.use('/api/houses', houseRouter);
 app.use('/api/reservations', reservationRouter);
 app.use('/api/shortages', shortageRouter);

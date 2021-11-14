@@ -69,9 +69,14 @@ const deleteHouse = async (houseId: string, adminId: string): Promise<void> => {
   await databaseHelper.removeHouseById(houseId, adminId);
 };
 
+const getUsersHouses = async (id: string): Promise<House[]> => {
+  return await databaseHelper.getUserByIdWithHousesTheyHaveAccessTo(id);
+};
+
 export default {
   addHouse,
   addUserToHouse,
   getAllHouseDataById,
   deleteHouse,
+  getUsersHouses,
 };

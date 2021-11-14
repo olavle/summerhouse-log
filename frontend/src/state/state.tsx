@@ -7,6 +7,7 @@ const initialState: State = {
   username: '',
   userPassword: '',
   stayLoggedIn: false,
+  houses: [],
 };
 
 export const StateContext = createContext<[State, React.Dispatch<Action>]>([

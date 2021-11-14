@@ -1,5 +1,4 @@
 import express from 'express';
-import houseData from '../database/dummydata/houseData';
 import houseService from '../services/houseService';
 import { parseNewHouse, parseString } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
@@ -7,8 +6,11 @@ import jwtHelper from '../utils/jwtHelper';
 const router = express.Router();
 
 // Get all houses for user
-router.get('/', (_req, res) => {
-  
+router.get('/', (req, res, next) => {
+  const user = jwtHelper.decodeUser(req.cookies.token);
+  houseService.getUsersHouses(user.id).then(result => {
+    res.status(200).json(result);
+  }).catch((err) => next(err));
 });
 
 // Get house by id
@@ -18,7 +20,7 @@ router.get('/:id', (req, res) => {
     .getAllHouseDataById(id)
     .then((data) => {
       res.status(200).json({
-        data
+        data,
       });
     })
     .catch((err) => console.log(err));
@@ -49,10 +51,10 @@ router.post('/', (req, res, next) => {
 });
 
 // Grant user the access to a house
-router.post('/:id', (req, res, next) => {
-  const houseId = req.params.id;
+router.post('/:houseId', (req, res, next) => {
+  const houseId = req.params.houseId;
   const admin = jwtHelper.decodeUser(req.cookies.token);
-  const userToAddId = parseString(req.body.id);
+  const userToAddId = parseString(req.body.userId);
   houseService
     .addUserToHouse(admin.id, userToAddId, houseId)
     .then(() => {
@@ -63,15 +65,17 @@ router.post('/:id', (req, res, next) => {
     .catch((err) => next(err));
 });
 
-
 // TODO: make it work in the DB end - gives error of foreign key constraint
 // Remove house
 router.delete('/:id', (req, res, next) => {
   const houseId = req.params.id;
   const user = jwtHelper.decodeUser(req.cookies.token);
-  houseService.deleteHouse(houseId, user.id).then(() => {
-    res.end();
-  }).catch(err => next(err));
+  houseService
+    .deleteHouse(houseId, user.id)
+    .then(() => {
+      res.end();
+    })
+    .catch((err) => next(err));
 });
 
 export default router;
