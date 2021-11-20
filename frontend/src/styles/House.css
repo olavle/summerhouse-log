@@ -1,0 +1,134 @@
+.HouseList {
+  padding-top: 20px;
+}
+
+.HouseItem {
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  color: black;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #e2e2e2;
+}
+
+.HouseName {
+  padding: 26px;
+  font-size: 34px;
+  color: #000000;
+}
+
+.HouseInfoPage {
+  display: flex;
+  flex-direction: row;
+}
+
+.HouseUsersList {
+  padding: 8px;
+  border: 1px solid black;
+  width: 200px;
+  border-radius: 5px;
+  color: #000000;
+  font-weight: 600;
+}
+
+.ReservationsList {
+  padding: 8px;
+  border: 1px solid black;
+  width: 400px;
+  border-radius: 5px;
+  color: #000000;
+  font-weight: 600;
+}
+
+.ShortageList {
+  padding: 8px;
+  border: 1px solid black;
+  width: 400px;
+  border-radius: 5px;
+  color: #000000;
+}
+
+td {
+  padding: 16px;
+}
+
+.MessageArea {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.MessageThread {
+  padding: 26px;
+  width: 300px;
+  overflow: auto;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 600px) {
+  .HouseList {
+    padding-top: 20px;
+  }
+  
+  .HouseItem {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: black;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #e2e2e2;
+  }
+  
+  .HouseName {
+    padding: 26px;
+    font-size: 34px;
+    color: #000000;
+  }
+  
+  .HouseInfoPage {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .HouseUsersList {
+    border: 1px solid black;
+    width: 100%;
+    border-radius: 5px;
+    color: #000000;
+    font-weight: 600;
+  }
+  
+  .ReservationsList {
+    padding: 8px;
+    border: 1px solid black;
+    width: 100%;
+    border-radius: 5px;
+    color: #000000;
+    font-weight: 600;
+  }
+  
+  .ShortageList {
+    padding: 8px;
+    border: 1px solid black;
+    width: 100%;
+    border-radius: 5px;
+    color: #000000;
+  }
+  
+  td {
+    padding: 16px;
+  }
+
+  .MessageArea {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+}

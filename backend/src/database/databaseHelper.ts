@@ -96,16 +96,24 @@ const getHouseById = async (id: string): Promise<House> => {
     `);
 
     const houseUsersFromDb = await pool.query(`
-    SELECT app_user_id from app_user AS a_user
+    SELECT app_user_id, username from app_user AS a_user
     FULL JOIN house_users AS h_users
     ON a_user.app_user_id = h_users.user_id
     FULL JOIN house AS house
     ON house.house_id = h_users.house_id WHERE h_users.house_id = '${id}';
     `);
 
+    // SELECT app_user_id, username from app_user AS a_user
+    // FULL JOIN house_users AS h_users
+    // ON a_user.app_user_id = h_users.user_id
+    // FULL JOIN house AS house
+    // ON house.house_id = h_users.house_id WHERE h_users.house_id = 'bf3bc6d1-f96d-4ec0-a0d0-c94565db3cea';
+
+
     const usersForHouse = houseUsersFromDb.rows.map((user) => {
       return {
         id: parseString(user.app_user_id),
+        username: parseString(user.username),
       };
     });
 
@@ -284,6 +292,7 @@ const getUserByIdWithHousesTheyHaveAccessTo = async (
   // RIGHT JOIN house_users ON (house_users.user_id = app_user.app_user_id)
   // RIGHT JOIN house ON (house.house_id = house_users.house_id) WHERE app_user_id = '${id}';
   // `);
+  
 
   // TODO: make it return also the users linked with the house?
   const result = await pool.query(`
@@ -383,6 +392,12 @@ const addNewShortageToDb = async ({
   `);
 };
 
+const resolveShortage = async (obj: Shortage): Promise<void> => {
+  await pool.query(`
+  UPDATE shortage SET resolved = '${obj.isResolved}' WHERE shortage_id = '${obj.id}';
+  `);
+};
+
 const getMessagesForHouseIdFromDb = async (
   houseId: string
 ): Promise<Message[]> => {
@@ -464,4 +479,5 @@ export default {
   addNewMessageToDb,
   addNewReplyToDb,
   getRepliesForMessage,
+  resolveShortage
 };

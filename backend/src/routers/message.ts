@@ -7,8 +7,8 @@ import jwtHelper from '../utils/jwtHelper';
 const router = Router();
 
 // Get all messages for house
-router.get('/:houseId', (_req, res, next) => {
-  const houseId = 'ID for eka mökki';
+router.get('/:houseId', (req, res, next) => {
+  const houseId = req.params.houseId;
   messageService
     .getMessagesForHouseId(houseId)
     .then((result) => {
@@ -30,11 +30,7 @@ router.post('/', (req, res, next) => {
 
   messageService
     .addNewMessage(messageData)
-    .then((result) =>
-      res.status(201).json({
-        added: result,
-      })
-    )
+    .then((result) => res.status(201).json(result))
     .catch((err) => next(err));
 });
 
@@ -51,9 +47,7 @@ router.post('/:messageId/replies', (req, res, next) => {
   replyService
     .addNewReply(reply)
     .then((result) =>
-      res.status(201).json({
-        added: result,
-      })
+      res.status(201).json(result)
     )
     .catch((err) => next(err));
 });

@@ -8,6 +8,24 @@ const initialState: State = {
   userPassword: '',
   stayLoggedIn: false,
   houses: [],
+  houseToEdit: {
+    id: '',
+    adminId: '',
+    maxResidents: 0,
+    name: '',
+    timestamp: '',
+    address: '',
+    imageUrl: '',
+    users: [],
+  },
+  reservations: [],
+  shortages: [],
+  shortageInputOpen: false,
+  newShortage: '',
+  messages: [],
+  messageReplies: [],
+  newMessageInput: '',
+  newMessageReplyInput: '',
 };
 
 export const StateContext = createContext<[State, React.Dispatch<Action>]>([

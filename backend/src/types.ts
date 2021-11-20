@@ -53,7 +53,7 @@ export interface House {
 export type NewHouse = Omit<House, 'id'>;
 
 export type HouseForUser = Pick<House, 'id'>;
-export type UserForHouse = Pick<User, 'id'>;
+export type UserForHouse = Pick<User, 'id' | 'username'>;
 
 export interface NewHouseFields {
   name: unknown;

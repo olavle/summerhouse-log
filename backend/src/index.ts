@@ -15,11 +15,12 @@ import {
 } from './middleware/errorHandlers';
 import jwtHelper from './utils/jwtHelper';
 import cors from 'cors';
+import path from 'path';
 // import databaseHelper from './database/databaseHelper'; // Uncomment if need to seed database
 
 const app = express();
 const port = config.port;
-
+const dir = path.join(__dirname, 'public');
 // databaseHelper.seedDataBase(); // Uncomment if need to seed database
 
 app.use(cors({
@@ -28,6 +29,7 @@ app.use(cors({
     credentials: true,
 
 }));
+app.use(express.static(dir));
 app.use(json());
 app.use(cookieParser());
 
@@ -41,7 +43,6 @@ app.use('/api/login', loginRouter);
 app.use('/api/users', userRouter);
 
 // Middleware to check the user is logged in
-// Could it be possible to pass around the user info to every router via this function?
 app.use((req: Request, _res: Response, next: NextFunction) => {
   jwtHelper.decodeUser(req.cookies.token);
   next();

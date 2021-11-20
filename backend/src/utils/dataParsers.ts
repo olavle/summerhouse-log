@@ -153,6 +153,7 @@ const parseOptionalUserForHouseIdList = (
     // check if item is type of HouseForUser
     return {
       id: parseString(item.id),
+      username: parseString(item.username)
     };
   });
   return finalList;
@@ -332,6 +333,21 @@ export const parseShortageFromDb = (obj: any): Shortage => {
     houseId: parseString(obj.house_id),
     content: parseString(obj.content),
     isResolved: parseBoolean(obj.resolved),
+    timestamp: parseDate(obj.timestamp)
+  };
+  return shortage;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseShortageFromClient = (obj: any): Shortage => {
+  console.log('Hello from parseShortageFromClient');
+  const shortage: Shortage = {
+    id: parseString(obj.id),
+    userWhoAddedId: parseString(obj.userWhoAddedId),
+    houseId: parseString(obj.houseId),
+    content: parseString(obj.content),
+    isResolved: parseBoolean(obj.isResolved),
     timestamp: parseDate(obj.timestamp)
   };
   return shortage;

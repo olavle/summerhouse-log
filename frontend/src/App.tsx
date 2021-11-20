@@ -16,7 +16,16 @@ const App = () => {
     } else {
       dispatch(logoutUser());
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn]);
+
+  const handleLogout = () => {
+    loginHelper
+      .logout()
+      .then(() => {
+        dispatch(logoutUser());
+      })
+      .catch((err) => console.log(err));
+  };
 
   // Being logged in doesn't matter that much, redirect the user to login when fetching data that is behind authorization
 
@@ -26,11 +35,9 @@ const App = () => {
   // https://stackoverflow.com/questions/61997401/how-to-logout-user-when-token-expires-in-react-app
   // **********
   // **********
-  
+
   return (
-    <div className='App'>
-      {isLoggedIn ? <LoggedInView /> : <LoginView />}
-    </div>
+    <div className='App'>{isLoggedIn ? <LoggedInView handleLogout={handleLogout} /> : <LoginView />}</div>
   );
 };
 

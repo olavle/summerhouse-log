@@ -8,20 +8,22 @@ const router = express.Router();
 // Get all houses for user
 router.get('/', (req, res, next) => {
   const user = jwtHelper.decodeUser(req.cookies.token);
-  houseService.getUsersHouses(user.id).then(result => {
-    res.status(200).json(result);
-  }).catch((err) => next(err));
+  houseService
+    .getUsersHouses(user.id)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => next(err));
 });
 
 // Get house by id
 router.get('/:id', (req, res) => {
   const id = req.params.id;
+  console.log('Hello from gethousebyid, with id:', id);
   houseService
     .getAllHouseDataById(id)
-    .then((data) => {
-      res.status(200).json({
-        data,
-      });
+    .then((result) => {
+      res.status(200).json(result);
     })
     .catch((err) => console.log(err));
 });
@@ -36,6 +38,7 @@ router.post('/', (req, res, next) => {
   });
   houseToAdd.users.push({
     id: user.id,
+    username: user.username,
   });
   houseService
     .addHouse(houseToAdd)
@@ -51,7 +54,7 @@ router.post('/', (req, res, next) => {
 });
 
 // Grant user the access to a house
-router.post('/:houseId', (req, res, next) => {
+router.post('/:houseId/addUser', (req, res, next) => {
   const houseId = req.params.houseId;
   const admin = jwtHelper.decodeUser(req.cookies.token);
   const userToAddId = parseString(req.body.userId);

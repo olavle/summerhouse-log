@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import shortageService from '../services/shortageService';
-import { parseNewShortage } from '../utils/dataParsers';
+import { parseNewShortage, parseShortageFromClient } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
 
 const router = Router();
@@ -23,14 +23,28 @@ router.get('/:houseId', (req, res, next) => {
 // });
 
 // Add a new shortage
-router.post('/', (req, res, next) => {
+router.post('/:houseId', (req, res, next) => {
   const user = jwtHelper.decodeUser(req.cookies.token);
+  const houseId = req.params.houseId;
   const shortage = parseNewShortage({
     ...req.body,
+    houseId,
     userWhoAddedId: user.id,
   });
   shortageService
     .addNewShortage(shortage)
+    .then((result) => {
+      res.status(201).json(result);
+    })
+    .catch((err) => next(err));
+});
+
+// Edit a shortage
+router.put('/', (req, res, next) => {
+  const shortage = parseShortageFromClient(req.body);
+  console.log('shortage from req.body:', shortage);
+  shortageService
+    .resolveShortage(shortage)
     .then(() => {
       res.status(201).end();
     })

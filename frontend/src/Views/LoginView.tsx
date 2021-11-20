@@ -1,8 +1,6 @@
 import React from 'react';
-import { loginUser } from '../state/reducer';
 import { useStateValue } from '../state/state';
 import loginHelper from '../utils/loginHelper';
-import Cookies from 'js-cookie';
 
 // interface Credentials {
 //   username: string;
@@ -34,9 +32,7 @@ const LoginView = () => {
       payload: event.target.value,
     });
   };
-  const handleStayLoggedInChange: React.ChangeEventHandler<HTMLInputElement> = (
-    event
-  ) => {
+  const handleStayLoggedInChange = () => {
     dispatch({
       type: 'STAY_LOGGEDIN',
       payload: !stayLoggedIn,
@@ -51,16 +47,15 @@ const LoginView = () => {
         keepLoggedIn: stayLoggedIn,
       });
       if (loginResponse.message === 'Logged in!') {
-        console.log('logged in yes')
         dispatch({
           type: 'LOGIN',
-          payload: true
-        })
+          payload: true,
+        });
       } else {
-        console.log('not logged in no')
+        window.alert('Wrong credentials');
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -94,10 +89,7 @@ const LoginView = () => {
           name='stayLoggedIn'
         />
       </div>
-      <button
-        onClick={handleLogin}>
-        Login
-      </button>
+      <button onClick={handleLogin}>Login</button>
     </div>
   );
 };

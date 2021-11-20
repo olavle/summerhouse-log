@@ -1,6 +1,6 @@
 import axios from 'axios';
+import { axiosInstance } from './axiosHelper';
 
-// const baseUrl = `http://kotiservu:3001`;
 const baseUrl = `http://localhost:3001`;
 
 interface ReturnData {
@@ -35,7 +35,12 @@ const userLoggedIn = (token: string | undefined): boolean => {
   return false;
 };
 
+const logout = async (): Promise<void> => {
+  await axiosInstance.post(`api/login/logout`);
+}
+
 export default {
   login,
-  userLoggedIn
+  userLoggedIn,
+  logout
 };
