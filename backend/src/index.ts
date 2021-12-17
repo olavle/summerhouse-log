@@ -23,13 +23,15 @@ const port = config.port;
 const dir = path.join(__dirname, 'public');
 // databaseHelper.seedDataBase(); // Uncomment if need to seed database
 
-app.use(cors({
-  origin: "http://localhost:3000",
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true,
-
-}));
+  })
+);
 app.use(express.static(dir));
+app.use(express.static('build'));
 app.use(json());
 app.use(cookieParser());
 

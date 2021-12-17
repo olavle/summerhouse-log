@@ -12,6 +12,7 @@ const houses: House[] = [
     users: [
       {
         id: '1',
+        username: 'Test'
       },
     ],
   },
@@ -26,6 +27,7 @@ const houses: House[] = [
     users: [
       {
         id: '1',
+        username: 'Test'
       },
     ],
   },

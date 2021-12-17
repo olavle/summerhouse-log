@@ -21,9 +21,14 @@ const addNewShortage = (shortage) => __awaiter(void 0, void 0, void 0, function*
     const id = (0, uuid_1.v4)();
     const shortageToAdd = Object.assign(Object.assign({}, shortage), { id });
     yield databaseHelper_1.default.addNewShortageToDb(shortageToAdd);
+    return shortageToAdd;
+});
+const resolveShortage = (obj) => __awaiter(void 0, void 0, void 0, function* () {
+    yield databaseHelper_1.default.resolveShortage(obj);
 });
 exports.default = {
     getHouseSpecificShortages,
     addNewShortage,
+    resolveShortage
 };
 //# sourceMappingURL=shortageService.js.map

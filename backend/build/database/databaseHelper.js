@@ -78,15 +78,21 @@ const getHouseById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     SELECT * FROM house WHERE house_id = '${id}';
     `);
         const houseUsersFromDb = yield pool.query(`
-    SELECT app_user_id from app_user AS a_user
+    SELECT app_user_id, username from app_user AS a_user
     FULL JOIN house_users AS h_users
     ON a_user.app_user_id = h_users.user_id
     FULL JOIN house AS house
     ON house.house_id = h_users.house_id WHERE h_users.house_id = '${id}';
     `);
+        // SELECT app_user_id, username from app_user AS a_user
+        // FULL JOIN house_users AS h_users
+        // ON a_user.app_user_id = h_users.user_id
+        // FULL JOIN house AS house
+        // ON house.house_id = h_users.house_id WHERE h_users.house_id = 'bf3bc6d1-f96d-4ec0-a0d0-c94565db3cea';
         const usersForHouse = houseUsersFromDb.rows.map((user) => {
             return {
                 id: (0, dataParsers_1.parseString)(user.app_user_id),
+                username: (0, dataParsers_1.parseString)(user.username),
             };
         });
         const fullHouseData = (0, dataParsers_1.parseHouseFromDb)(houseFromDb.rows[0], usersForHouse);
@@ -239,7 +245,10 @@ const getUserByIdWithHousesTheyHaveAccessTo = (id) => __awaiter(void 0, void 0, 
     // FULL JOIN house AS house
     // ON h_users.house_id = house.house_id WHERE h_users.user_id = '${id}';
     // `);
-    console.log('getUserByIdWithHouses', result.rows);
+    const toReturn = result.rows.map(item => {
+        return (0, dataParsers_1.parseHouseFromDb)(item);
+    });
+    return toReturn;
 });
 // https://www.sqlshack.com/sql-multiple-joins-for-beginners-with-examples/
 // Get all data of a house
@@ -290,6 +299,11 @@ const addNewShortageToDb = ({ id, userWhoAddedId, houseId, content, isResolved, 
     '${isResolved}',
     '${timestamp}'
   );
+  `);
+});
+const resolveShortage = (obj) => __awaiter(void 0, void 0, void 0, function* () {
+    yield pool.query(`
+  UPDATE shortage SET resolved = '${obj.isResolved}' WHERE shortage_id = '${obj.id}';
   `);
 });
 const getMessagesForHouseIdFromDb = (houseId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -353,5 +367,6 @@ exports.default = {
     addNewMessageToDb,
     addNewReplyToDb,
     getRepliesForMessage,
+    resolveShortage
 };
 //# sourceMappingURL=databaseHelper.js.map

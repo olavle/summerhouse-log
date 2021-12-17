@@ -64,13 +64,17 @@ export interface NewHouseFields {
 export interface Message extends BaseInfo {
   houseId: string;
   content: string;
-  timestamp: string; // TODO: See if this should be typeof Date
+  timestamp: string;
 }
 
 export interface MessageReply extends BaseInfo {
   content: string;
   timestamp: string;
   originalMessageId: string;
+}
+
+export interface MessageWithReplies extends Message {
+  replies: MessageReply[] | [];
 }
 
 export interface Reservation extends BaseInfo {

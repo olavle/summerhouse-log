@@ -10,8 +10,8 @@ const dataParsers_1 = require("../utils/dataParsers");
 const jwtHelper_1 = __importDefault(require("../utils/jwtHelper"));
 const router = (0, express_1.Router)();
 // Get all messages for house
-router.get('/:houseId', (_req, res, next) => {
-    const houseId = 'ID for eka mökki';
+router.get('/:houseId', (req, res, next) => {
+    const houseId = req.params.houseId;
     messageService_1.default
         .getMessagesForHouseId(houseId)
         .then((result) => {
@@ -27,9 +27,7 @@ router.post('/', (req, res, next) => {
     const messageData = (0, dataParsers_1.parseNewMessage)(Object.assign(Object.assign({}, req.body), { userWhoAddedId: user.id }));
     messageService_1.default
         .addNewMessage(messageData)
-        .then((result) => res.status(201).json({
-        added: result,
-    }))
+        .then((result) => res.status(201).json(result))
         .catch((err) => next(err));
 });
 // MESSAGE REPLY
@@ -40,9 +38,7 @@ router.post('/:messageId/replies', (req, res, next) => {
     const reply = (0, dataParsers_1.parseNewReply)(Object.assign(Object.assign({}, req.body), { originalMessageId, userWhoAddedId: user.id }));
     replyService_1.default
         .addNewReply(reply)
-        .then((result) => res.status(201).json({
-        added: result,
-    }))
+        .then((result) => res.status(201).json(result))
         .catch((err) => next(err));
 });
 // Get replies for a message

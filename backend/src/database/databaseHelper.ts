@@ -5,6 +5,7 @@ import {
   House,
   Message,
   MessageReply,
+  MessageWithReplies,
   Reservation,
   Shortage,
   User,
@@ -17,6 +18,7 @@ import {
   parseShortageFromDb,
   parseMessageFromDb,
   parseReplyFromDb,
+  parseMessageWithRepliesFromDb,
 } from '../utils/dataParsers';
 import {
   tableCreationStatements,
@@ -108,7 +110,6 @@ const getHouseById = async (id: string): Promise<House> => {
     // ON a_user.app_user_id = h_users.user_id
     // FULL JOIN house AS house
     // ON house.house_id = h_users.house_id WHERE h_users.house_id = 'bf3bc6d1-f96d-4ec0-a0d0-c94565db3cea';
-
 
     const usersForHouse = houseUsersFromDb.rows.map((user) => {
       return {
@@ -292,7 +293,6 @@ const getUserByIdWithHousesTheyHaveAccessTo = async (
   // RIGHT JOIN house_users ON (house_users.user_id = app_user.app_user_id)
   // RIGHT JOIN house ON (house.house_id = house_users.house_id) WHERE app_user_id = '${id}';
   // `);
-  
 
   // TODO: make it return also the users linked with the house?
   const result = await pool.query(`
@@ -310,7 +310,7 @@ const getUserByIdWithHousesTheyHaveAccessTo = async (
   // FULL JOIN house AS house
   // ON h_users.house_id = house.house_id WHERE h_users.user_id = '${id}';
   // `);
-  const toReturn = result.rows.map(item => {
+  const toReturn = result.rows.map((item) => {
     return parseHouseFromDb(item);
   });
   return toReturn;
@@ -410,6 +410,29 @@ const getMessagesForHouseIdFromDb = async (
   return results;
 };
 
+const getMessagesWithRepliesForHouseIdFromDb = async (
+  houseId: string
+): Promise<MessageWithReplies[]> => {
+  const messageResult = await pool.query(`
+    SELECT * FROM message WHERE house_id='${houseId}';
+  `);
+  const messages = messageResult.rows.map((message) => {
+    return parseMessageFromDb(message);
+  });
+
+  const messagesWithReply = messages.map(async (message) => {
+    const repliesResult = await getRepliesForMessage(message.id);
+    const replies = parseReplyFromDb(repliesResult); // get replies returns list but parse reply returns one reply
+    const toReturn = {
+      ...message,
+      replies,
+    };
+    return parseMessageWithRepliesFromDb(toReturn);
+  });
+
+  return messagesWithReply;
+};
+
 const addNewMessageToDb = async ({
   id,
   userWhoAddedId,
@@ -479,5 +502,6 @@ export default {
   addNewMessageToDb,
   addNewReplyToDb,
   getRepliesForMessage,
-  resolveShortage
+  resolveShortage,
+  getMessagesWithRepliesForHouseIdFromDb,
 };

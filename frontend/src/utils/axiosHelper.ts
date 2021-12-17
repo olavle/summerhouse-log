@@ -2,10 +2,15 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:3001';
 
+
 export const axiosInstance = axios.create({
   withCredentials: true,
   baseURL: baseUrl,
 });
+
+// export const axiosInstance = axios.create({
+//   withCredentials: true,
+// });
 
 const get = async <Type>(url: string): Promise<Type> => {
   const response = await axios.get(`${baseUrl}/${url}`, {
@@ -14,12 +19,25 @@ const get = async <Type>(url: string): Promise<Type> => {
   return await response.data;
 };
 
+// const get = async <Type>(url: string): Promise<Type> => {
+//   const response = await axios.get(`${url}`, {
+//     withCredentials: true,
+//   });
+//   return await response.data;
+// };
+
 const post = async <Type>(url: string, obj?: Type) => {
   const response = await axios.post(`${baseUrl}/${url}`, obj, {
     withCredentials: true,
   });
   return response;
 };
+// const post = async <Type>(url: string, obj?: Type) => {
+//   const response = await axios.post(`${url}`, obj, {
+//     withCredentials: true,
+//   });
+//   return response;
+// };
 
 const put = async <Type>(url: string, obj?: Type) => {
   const response = await axios.put(`${baseUrl}/${url}`, obj, {
@@ -27,6 +45,12 @@ const put = async <Type>(url: string, obj?: Type) => {
   });
   return response;
 };
+// const put = async <Type>(url: string, obj?: Type) => {
+//   const response = await axios.put(`${url}`, obj, {
+//     withCredentials: true,
+//   });
+//   return response;
+// };
 
 export default {
   get,

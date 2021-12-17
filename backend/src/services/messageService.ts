@@ -3,7 +3,7 @@ import databaseHelper from '../database/databaseHelper';
 import { v4 as uuidv4 } from 'uuid';
 
 const getMessagesForHouseId = async (houseId: string): Promise<Message[]> => {
-  return await databaseHelper.getMessagesForHouseIdFromDb(houseId);
+  return await databaseHelper.getMessagesWithRepliesForHouseIdFromDb(houseId);
 };
 
 const addNewMessage = async (message: NewMessage): Promise<Message> => {

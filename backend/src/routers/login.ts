@@ -16,11 +16,11 @@ router.post('/', (req, res, next) => {
         console.log('jwt for login is!', jwt);
         const tokenExpirty = userFromInput.keepLoggedIn
           ? undefined
-          : dayjs().add(1, 'minute').toDate(); // change expirty to 1h
+          : dayjs().add(1, 'hour').toDate(); // expirty in 1h
 
         res.cookie('token', jwt, {
-          secure: false, // this should later be changed
-          httpOnly: false,
+          secure: false,    // HTTPS cerificate required
+          httpOnly: false,  // this should later be changed
           expires: tokenExpirty,
         });
 
@@ -54,3 +54,8 @@ router.post('/logout', (req, res, next) => {
 });
 
 export default router;
+
+
+
+
+

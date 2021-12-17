@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseReplyFromDb = exports.parseNewReply = exports.parseNewMessage = exports.parseMessageFromDb = exports.parseNewShortage = exports.parseShortageFromDb = exports.parseReservationFromDb = exports.parseNewReservation = exports.parseNewHouse = exports.parseHouseFromDb = exports.parseUserPasswordToEdit = exports.parseUserToEdit = exports.parseUserFromDb = exports.parseLogin = exports.parseNewUser = exports.parseString = void 0;
+exports.parseReplyFromDb = exports.parseNewReply = exports.parseNewMessage = exports.parseMessageFromDb = exports.parseNewShortage = exports.parseShortageFromClient = exports.parseShortageFromDb = exports.parseReservationFromDb = exports.parseNewReservation = exports.parseNewHouse = exports.parseHouseFromDb = exports.parseUserPasswordToEdit = exports.parseUserToEdit = exports.parseUserFromDb = exports.parseLogin = exports.parseNewUser = exports.parseString = void 0;
 const dayjs_1 = __importDefault(require("dayjs"));
 // import timezone from 'dayjs/plugin/timezone';
 // dayjs.extend(timezone);
@@ -121,6 +121,7 @@ const parseOptionalUserForHouseIdList = (list) => {
         // check if item is type of HouseForUser
         return {
             id: (0, exports.parseString)(item.id),
+            username: (0, exports.parseString)(item.username)
         };
     });
     return finalList;
@@ -300,6 +301,21 @@ const parseShortageFromDb = (obj) => {
     return shortage;
 };
 exports.parseShortageFromDb = parseShortageFromDb;
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const parseShortageFromClient = (obj) => {
+    console.log('Hello from parseShortageFromClient');
+    const shortage = {
+        id: (0, exports.parseString)(obj.id),
+        userWhoAddedId: (0, exports.parseString)(obj.userWhoAddedId),
+        houseId: (0, exports.parseString)(obj.houseId),
+        content: (0, exports.parseString)(obj.content),
+        isResolved: parseBoolean(obj.isResolved),
+        timestamp: parseDate(obj.timestamp)
+    };
+    return shortage;
+};
+exports.parseShortageFromClient = parseShortageFromClient;
 // Disable eslint for the 'any' error to access obj properly
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parseNewShortage = (obj) => {

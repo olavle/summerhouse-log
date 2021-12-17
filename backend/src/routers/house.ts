@@ -8,6 +8,7 @@ const router = express.Router();
 // Get all houses for user
 router.get('/', (req, res, next) => {
   const user = jwtHelper.decodeUser(req.cookies.token);
+  console.log('Getting houses for user:', user);
   houseService
     .getUsersHouses(user.id)
     .then((result) => {

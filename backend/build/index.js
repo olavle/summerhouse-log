@@ -34,11 +34,19 @@ const config_1 = __importDefault(require("./config"));
 const errorHandlers_1 = require("./middleware/errorHandlers");
 const jwtHelper_1 = __importDefault(require("./utils/jwtHelper"));
 const cors_1 = __importDefault(require("cors"));
+const path_1 = __importDefault(require("path"));
 // import databaseHelper from './database/databaseHelper'; // Uncomment if need to seed database
 const app = (0, express_1.default)();
 const port = config_1.default.port;
+const dir = path_1.default.join(__dirname, 'public');
 // databaseHelper.seedDataBase(); // Uncomment if need to seed database
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: "http://localhost:3000",
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
+}));
+app.use(express_1.default.static(dir));
+app.use(express_1.default.static('build'));
 app.use((0, express_1.json)());
 app.use((0, cookie_parser_1.default)());
 app.use('/api/ping', (_req, res, _next) => {
@@ -47,13 +55,12 @@ app.use('/api/ping', (_req, res, _next) => {
     });
 });
 app.use('/api/login', login_1.default);
+app.use('/api/users', user_1.default);
 // Middleware to check the user is logged in
-// Could it be possible to pass around the user info to every router via this function?
 app.use((req, _res, next) => {
     jwtHelper_1.default.decodeUser(req.cookies.token);
     next();
 });
-app.use('/api/users', user_1.default);
 app.use('/api/houses', house_1.default);
 app.use('/api/reservations', reservation_1.default);
 app.use('/api/shortages', shortage_1.default);

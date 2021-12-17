@@ -24,11 +24,23 @@ router.get('/:houseId', (req, res, next) => {
 //   const shortageId = req.params.shortageId;
 // });
 // Add a new shortage
-router.post('/', (req, res, next) => {
+router.post('/:houseId', (req, res, next) => {
     const user = jwtHelper_1.default.decodeUser(req.cookies.token);
-    const shortage = (0, dataParsers_1.parseNewShortage)(Object.assign(Object.assign({}, req.body), { userWhoAddedId: user.id }));
+    const houseId = req.params.houseId;
+    const shortage = (0, dataParsers_1.parseNewShortage)(Object.assign(Object.assign({}, req.body), { houseId, userWhoAddedId: user.id }));
     shortageService_1.default
         .addNewShortage(shortage)
+        .then((result) => {
+        res.status(201).json(result);
+    })
+        .catch((err) => next(err));
+});
+// Edit a shortage
+router.put('/', (req, res, next) => {
+    const shortage = (0, dataParsers_1.parseShortageFromClient)(req.body);
+    console.log('shortage from req.body:', shortage);
+    shortageService_1.default
+        .resolveShortage(shortage)
         .then(() => {
         res.status(201).end();
     })

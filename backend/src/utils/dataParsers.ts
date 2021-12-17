@@ -5,6 +5,7 @@ import {
   LoginUser,
   Message,
   MessageReply,
+  MessageWithReplies,
   NewHouse,
   NewMessage,
   NewMessageReply,
@@ -45,6 +46,7 @@ const isRole = (param: unknown): param is UserRole => {
 };
 
 export const parseString = (text: unknown): string => {
+  console.log('Hello from parse string with value:', text);
   if (!text || !isString(text)) {
     console.log('Error in parseString');
     throw new Error(`parse-fail`);
@@ -126,6 +128,15 @@ const parseRoleForDbUser = (role: unknown): UserRole => {
   return role;
 };
 
+const parseReplyListFromDb = (replies: unknown): MessageReply[] | [] => {
+  if (!replies || !Array.isArray(replies)) {
+    return [];
+  }
+  return replies.map((reply) => {
+    return parseReplyFromDb(reply);
+  });
+};
+
 // const parseUserForHouseIdList = (list: unknown): UserForHouse[] => {
 //   if (!list || !Array.isArray(list)) {
 //     console.log('Error in parseUserForHouseIdList');
@@ -153,7 +164,7 @@ const parseOptionalUserForHouseIdList = (
     // check if item is type of HouseForUser
     return {
       id: parseString(item.id),
-      username: parseString(item.username)
+      username: parseString(item.username),
     };
   });
   return finalList;
@@ -236,7 +247,10 @@ export const parseUserFromDb = (obj: any): User => {
 
 // Disable eslint for the 'any' error to access obj properly
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const parseUserToEdit = (obj: any, originalUser: UserForJwt): EditableUserBasicInfo => {
+export const parseUserToEdit = (
+  obj: any,
+  originalUser: UserForJwt
+): EditableUserBasicInfo => {
   console.log('Hello from parseUserToEdit');
   const editable: EditableUserBasicInfo = {
     fname: parseOptionalString(obj.fname) || parseString(originalUser.fname),
@@ -333,7 +347,7 @@ export const parseShortageFromDb = (obj: any): Shortage => {
     houseId: parseString(obj.house_id),
     content: parseString(obj.content),
     isResolved: parseBoolean(obj.resolved),
-    timestamp: parseDate(obj.timestamp)
+    timestamp: parseDate(obj.timestamp),
   };
   return shortage;
 };
@@ -348,7 +362,7 @@ export const parseShortageFromClient = (obj: any): Shortage => {
     houseId: parseString(obj.houseId),
     content: parseString(obj.content),
     isResolved: parseBoolean(obj.isResolved),
-    timestamp: parseDate(obj.timestamp)
+    timestamp: parseDate(obj.timestamp),
   };
   return shortage;
 };
@@ -362,7 +376,7 @@ export const parseNewShortage = (obj: any): NewShortage => {
     houseId: parseString(obj.houseId),
     content: parseString(obj.content),
     isResolved: parseBoolean(false),
-    timestamp: parseDate(dayjs().locale('fi').format())
+    timestamp: parseDate(dayjs().locale('fi').format()),
   };
   return shortage;
 };
@@ -410,7 +424,7 @@ export const parseNewReply = (obj: any): NewMessageReply => {
 // Disable eslint for the 'any' error to access obj properly
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const parseReplyFromDb = (obj: any): MessageReply => {
-  console.log('Hello from parseNewNewReply');
+  console.log('Hello from parseReplyFromDb with value:', obj);
   const reply: MessageReply = {
     id: parseString(obj.message_reply_id),
     userWhoAddedId: parseString(obj.author_id),
@@ -419,4 +433,20 @@ export const parseReplyFromDb = (obj: any): MessageReply => {
     timestamp: parseDate(obj.timestamp),
   };
   return reply;
+};
+
+// Disable eslint for the 'any' error to access obj properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseMessageWithRepliesFromDb = (obj: any): MessageWithReplies => {
+  console.log('Hello from parseMessageWithRepliesFromDb');
+  const messageWithReplies: MessageWithReplies = {
+    id: parseString(obj.message_id),
+    userWhoAddedId: parseString(obj.author_id),
+    houseId: parseString(obj.house_id),
+    content: parseString(obj.content),
+    timestamp: parseDate(obj.timestamp),
+    replies: parseReplyListFromDb(obj.replies),
+  };
+
+  return messageWithReplies;
 };

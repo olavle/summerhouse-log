@@ -30,3 +30,5 @@ const HouseList = ({ houses }: Props) => {
 };
 
 export default HouseList;
+
+

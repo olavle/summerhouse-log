@@ -66,10 +66,14 @@ const getAllHouseDataById = (id) => __awaiter(void 0, void 0, void 0, function* 
 const deleteHouse = (houseId, adminId) => __awaiter(void 0, void 0, void 0, function* () {
     yield databaseHelper_1.default.removeHouseById(houseId, adminId);
 });
+const getUsersHouses = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield databaseHelper_1.default.getUserByIdWithHousesTheyHaveAccessTo(id);
+});
 exports.default = {
     addHouse,
     addUserToHouse,
     getAllHouseDataById,
     deleteHouse,
+    getUsersHouses,
 };
 //# sourceMappingURL=houseService.js.map

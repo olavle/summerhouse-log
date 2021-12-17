@@ -55,6 +55,7 @@ const HouseView = () => {
                 reservations={reservations}
                 users={houseToEdit.users}
               />
+              <a href="#">Lisää uusi...</a>
             </div>
             <div style={{ padding: '26px' }}>
               <ShortageList shortages={shortages} />

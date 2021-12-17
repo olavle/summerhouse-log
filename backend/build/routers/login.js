@@ -22,7 +22,7 @@ router.post('/', (req, res, next) => {
                 : (0, dayjs_1.default)().add(1, 'minute').toDate(); // change expirty to 1h
             res.cookie('token', jwt, {
                 secure: false,
-                httpOnly: true,
+                httpOnly: false,
                 expires: tokenExpirty,
             });
             res.status(200).send({
