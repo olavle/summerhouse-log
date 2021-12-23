@@ -5,7 +5,7 @@ import {
   House,
   Message,
   MessageReply,
-  MessageWithReplies,
+  // MessageWithReplies,
   Reservation,
   Shortage,
   User,
@@ -18,7 +18,7 @@ import {
   parseShortageFromDb,
   parseMessageFromDb,
   parseReplyFromDb,
-  parseMessageWithRepliesFromDb,
+  // parseMessageWithRepliesFromDb,
 } from '../utils/dataParsers';
 import {
   tableCreationStatements,
@@ -412,7 +412,8 @@ const getMessagesForHouseIdFromDb = async (
 
 const getMessagesWithRepliesForHouseIdFromDb = async (
   houseId: string
-): Promise<MessageWithReplies[]> => {
+  // ): Promise<MessageWithReplies[] | []> => {
+): Promise<void> => {
   const messageResult = await pool.query(`
     SELECT * FROM message WHERE house_id='${houseId}';
   `);
@@ -420,17 +421,41 @@ const getMessagesWithRepliesForHouseIdFromDb = async (
     return parseMessageFromDb(message);
   });
 
-  const messagesWithReply = messages.map(async (message) => {
-    const repliesResult = await getRepliesForMessage(message.id);
-    const replies = parseReplyFromDb(repliesResult); // get replies returns list but parse reply returns one reply
-    const toReturn = {
-      ...message,
-      replies,
-    };
-    return parseMessageWithRepliesFromDb(toReturn);
+  console.log('this is messages', messages);
+
+  const messagesWithReplies = messages.map((message) => {
+    // const replies = await getRepliesForMessage(message.id);
+    const asd = getRepliesForMessage(message.id)
+      .then((result) => {
+        return result;
+      })
+      .catch((err) => console.log(err));
+    // console.log('this is replies:', replies);
+    return asd;
   });
 
-  return messagesWithReply;
+  console.log('this is messagesWithReplies', messagesWithReplies);
+
+  // const messagesWithReply = messages.map(async (message) => {
+  //   const repliesResult = await getRepliesForMessage(message.id);
+  //   if (repliesResult.length === 0) {
+  //     return [];
+  //   }
+  //   const replies = repliesResult.map((reply) => {
+  //     return parseReplyFromDb(reply);
+  //   });
+  //   // const replies = parseReplyFromDb(repliesResult); // get replies returns list but parse reply returns one reply
+  //   const toReturn = {
+  //     ...message,
+  //     replies,
+  //   };
+
+  //   return parseMessageWithRepliesFromDb(toReturn);
+  // });
+
+  // console.log('this is messages with reply', messagesWithReply);
+
+  // return messagesWithReply;
 };
 
 const addNewMessageToDb = async ({
@@ -471,10 +496,13 @@ const addNewReplyToDb = async ({
 
 const getRepliesForMessage = async (
   messageId: string
-): Promise<MessageReply[]> => {
+): Promise<MessageReply[] | []> => {
   const result = await pool.query(`
   SELECT * FROM message_reply WHERE reply_to_id = '${messageId}';
   `);
+  if (result.rows.length === 0) {
+    return [];
+  }
   const results = result.rows.map((item) => {
     return parseReplyFromDb(item);
   });
