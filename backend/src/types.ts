@@ -69,6 +69,7 @@ export interface Message extends BaseInfo {
 
 export interface MessageReply extends BaseInfo {
   content: string;
+  houseId: string;
   timestamp: string;
   originalMessageId: string;
 }

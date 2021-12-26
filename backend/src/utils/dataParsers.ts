@@ -46,7 +46,6 @@ const isRole = (param: unknown): param is UserRole => {
 };
 
 export const parseString = (text: unknown): string => {
-  console.log('Hello from parse string with value:', text);
   if (!text || !isString(text)) {
     console.log('Error in parseString');
     throw new Error(`parse-fail`);
@@ -414,6 +413,7 @@ export const parseNewReply = (obj: any): NewMessageReply => {
   console.log('Hello from parseNewNewReply');
   const reply: NewMessageReply = {
     userWhoAddedId: parseString(obj.userWhoAddedId),
+    houseId: parseString(obj.houseId),
     originalMessageId: parseString(obj.originalMessageId),
     content: parseString(obj.content),
     timestamp: parseDate(dayjs().locale('fi').format()),
@@ -427,6 +427,7 @@ export const parseReplyFromDb = (obj: any): MessageReply => {
   console.log('Hello from parseReplyFromDb with value:', obj);
   const reply: MessageReply = {
     id: parseString(obj.message_reply_id),
+    houseId: parseString(obj.house_id),
     userWhoAddedId: parseString(obj.author_id),
     originalMessageId: parseString(obj.reply_to_id),
     content: parseString(obj.content),
@@ -438,7 +439,7 @@ export const parseReplyFromDb = (obj: any): MessageReply => {
 // Disable eslint for the 'any' error to access obj properly
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const parseMessageWithRepliesFromDb = (obj: any): MessageWithReplies => {
-  console.log('Hello from parseMessageWithRepliesFromDb');
+  console.log('Hello from parseMessageWithRepliesFromDb with value:', obj);
   const messageWithReplies: MessageWithReplies = {
     id: parseString(obj.message_id),
     userWhoAddedId: parseString(obj.author_id),

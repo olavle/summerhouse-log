@@ -1,16 +1,20 @@
 import { Router } from 'express';
 import messageService from '../services/messageService';
 import replyService from '../services/replyService';
-import { parseNewMessage, parseNewReply } from '../utils/dataParsers';
+import { parseNewReply } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
 
-const router = Router();
+const router = Router({ mergeParams: true });
+
+interface IParams {
+  houseId: string;
+}
 
 // Get all messages for house
-router.get('/:houseId', (req, res, next) => {
-  const houseId = req.params.houseId;
+router.get('/', (req, res, next) => {
+  const {houseId} = req.params as IParams;
   messageService
-    .getMessagesForHouseId(houseId)
+    .getMessagesForHouseId(houseId) // Guess it works TODO: Make the console print work?
     .then((result) => {
       console.log(result);
       res.status(200).json(result);
@@ -20,19 +24,21 @@ router.get('/:houseId', (req, res, next) => {
 
 // Add a new message
 // TODO: Check if the user has access to the house in question
-router.post('/', (req, res, next) => {
-  const user = jwtHelper.decodeUser(req.cookies.token);
+// router.post('/', (req, res, next) => {
+//   const user = jwtHelper.decodeUser(req.cookies.token);
+//   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+//   const houseId = req.params.houseId;
+//   const messageData = parseNewMessage({
+//     ...req.body,
+//     houseId,
+//     userWhoAddedId: user.id,
+//   });
 
-  const messageData = parseNewMessage({
-    ...req.body,
-    userWhoAddedId: user.id,
-  });
-
-  messageService
-    .addNewMessage(messageData)
-    .then((result) => res.status(201).json(result))
-    .catch((err) => next(err));
-});
+//   messageService
+//     .addNewMessage(messageData)
+//     .then((result) => res.status(201).json(result))
+//     .catch((err) => next(err));
+// });
 
 // MESSAGE REPLY
 // Add new reply
@@ -46,9 +52,7 @@ router.post('/:messageId/replies', (req, res, next) => {
   });
   replyService
     .addNewReply(reply)
-    .then((result) =>
-      res.status(201).json(result)
-    )
+    .then((result) => res.status(201).json(result))
     .catch((err) => next(err));
 });
 

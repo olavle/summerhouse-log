@@ -1,5 +1,5 @@
 import React from 'react';
-import House from '../pages/House';
+// import House from '../pages/House';
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import { Route, Routes } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import '../styles/LoggedInView.css';
 import HouseView from '../pages/HouseView';
 import Messages from '../pages/Messages';
+// import CreateUser from '../pages/CreateUser';
 
 interface Props {
   handleLogout: () => void;
@@ -29,7 +30,6 @@ const LoggedInView = ({ handleLogout }: Props) => {
       </div>
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/house' element={<House />} />
         <Route path='/user' element={<Profile />} />
         <Route path='/house/:id' element={<HouseView />} />
         <Route path='/house/:id/messages' element={<Messages />} />

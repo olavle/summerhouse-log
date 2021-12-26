@@ -2,9 +2,10 @@ import { Router } from 'express';
 import houseService from '../services/houseService';
 import { parseNewHouse, parseString } from '../utils/dataParsers';
 import jwtHelper from '../utils/jwtHelper';
+import messageRouter from './message';
 
-const router = Router();
-
+const router = Router({ mergeParams: true });
+router.use('/:houseId/messages', messageRouter);
 
 // Get all houses for user
 router.get('/', (req, res, next) => {

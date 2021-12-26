@@ -5,7 +5,7 @@ import {
   House,
   Message,
   MessageReply,
-  // MessageWithReplies,
+  MessageWithReplies,
   Reservation,
   Shortage,
   User,
@@ -412,29 +412,87 @@ const getMessagesForHouseIdFromDb = async (
 
 const getMessagesWithRepliesForHouseIdFromDb = async (
   houseId: string
-  // ): Promise<MessageWithReplies[] | []> => {
-): Promise<void> => {
-  const messageResult = await pool.query(`
-    SELECT * FROM message WHERE house_id='${houseId}';
+  ): Promise<MessageWithReplies[] | []> => {
+// ): Promise<void> => {
+  // const messageResult = await pool.query(`
+  //   SELECT * FROM message WHERE house_id='${houseId}';
+  // `);
+
+  const messages = await getMessagesForHouseIdFromDb(houseId);
+  const repliesResult = await pool.query(`
+    SELECT * FROM message_reply WHERE house_id='${houseId}';
   `);
-  const messages = messageResult.rows.map((message) => {
-    return parseMessageFromDb(message);
+
+  const replies = repliesResult.rows.map((reply) => parseReplyFromDb(reply));
+
+  console.log(
+    '****************************************************************Messages:',
+    messages
+  );
+  console.log(
+    '****************************************************************Replies:',
+    replies
+  );
+
+  const messagesWithReplies: MessageWithReplies[] = messages.map((message) => {
+    const repliesForMessage = replies.filter((reply) => {
+      if (reply.originalMessageId === message.id) {
+        return reply;
+      }
+      return null;
+    });
+    return {
+      ...message,
+      replies: repliesForMessage, // TODO: Sort out the [object Object] issue
+    };
   });
 
-  console.log('this is messages', messages);
+  console.log(
+    '*********************Message with replies:',
+    messagesWithReplies
+  );
 
-  const messagesWithReplies = messages.map((message) => {
-    // const replies = await getRepliesForMessage(message.id);
-    const asd = getRepliesForMessage(message.id)
-      .then((result) => {
-        return result;
-      })
-      .catch((err) => console.log(err));
-    // console.log('this is replies:', replies);
-    return asd;
-  });
+  return messagesWithReplies;
 
-  console.log('this is messagesWithReplies', messagesWithReplies);
+  // const messagesWithReplies = messages.map((message) => {
+  //   const messageReplies = replies.filter((reply) => {
+  //     if (reply.originalMessageId === message.id) {
+  //       console.log('Hello from reply filter with value:', reply);
+  //       return reply;
+  //     } else {
+  //       console.log('Hello from reply filter the value is null');
+  //       return null;
+  //     }
+  //   });
+  //   if (messageReplies.length === 0) {
+  //     console.log('The replies lenght was 0!');
+  //     return parseMessageWithRepliesFromDb({
+  //       ...message,
+  //       replies: [],
+  //     });
+  //   }
+  //   return parseMessageWithRepliesFromDb({
+  //     ...message,
+  //     replies: messageReplies,
+  //   });
+  // });
+
+  // return messagesWithReplies;
+
+  // console.log('this is messages', messages);
+
+  // const messagesWithReplies = messages.map((message) => {
+  //   // const replies = await getRepliesForMessage(message.id);
+  //   const asd = getRepliesForMessage(message.id)
+  //     .then((result) => {
+  //       return result;
+  //     })
+  //     .catch((err) => console.log(err));
+  //   // console.log('this is replies:', replies);
+  //   return asd;
+  // });
+
+  // console.log('this is messagesWithReplies', messagesWithReplies);
 
   // const messagesWithReply = messages.map(async (message) => {
   //   const repliesResult = await getRepliesForMessage(message.id);

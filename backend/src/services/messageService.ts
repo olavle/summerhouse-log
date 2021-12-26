@@ -1,10 +1,10 @@
-import { Message, NewMessage } from '../types';
+import { Message, MessageWithReplies, NewMessage } from '../types';
 import databaseHelper from '../database/databaseHelper';
 import { v4 as uuidv4 } from 'uuid';
 
-const getMessagesForHouseId = async (houseId: string): Promise<Message[]> => {
-  await databaseHelper.getMessagesWithRepliesForHouseIdFromDb(houseId);
-  return await databaseHelper.getMessagesForHouseIdFromDb(houseId);
+const getMessagesForHouseId = async (houseId: string): Promise<MessageWithReplies[]> => {
+  return await databaseHelper.getMessagesWithRepliesForHouseIdFromDb(houseId);
+  // return await databaseHelper.getMessagesForHouseIdFromDb(houseId);
 };
 
 const addNewMessage = async (message: NewMessage): Promise<Message> => {

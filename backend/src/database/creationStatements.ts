@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS message (
 
 CREATE TABLE IF NOT EXISTS message_reply (
   message_reply_id varchar(255) NOT NULL UNIQUE,
+  house_id varchar(255) NOT NULL,
   author_id varchar(255) NOT NULL,
   reply_to_id varchar(255) NOT NULL,
   content varchar(1024) NOT NULL,
@@ -81,7 +82,7 @@ CREATE TABLE IF NOT EXISTS reservation (
 
 export const databaseSeedStatements = `
     INSERT INTO app_user VALUES (
-      'ID for esko aho',
+      'ID-for-esko-aho',
       'Esko',
       'Aho',
       'eAho',
@@ -91,7 +92,7 @@ export const databaseSeedStatements = `
     );
 
     INSERT INTO app_user VALUES (
-      'ID for aaro eho',
+      'ID-for-aaro-eho',
       'Aaro',
       'eho',
       'aEho',
@@ -101,7 +102,7 @@ export const databaseSeedStatements = `
     );
 
     INSERT INTO app_user VALUES (
-      'ID for jaana pelkonen',
+      'ID-for-jaana-pelkonen',
       'Jaana',
       'Pelkonen',
       'pelkis',
@@ -111,8 +112,8 @@ export const databaseSeedStatements = `
     );
 
     INSERT INTO house VALUES (
-      'ID for eka mökki',
-      'ID for esko aho',
+      'ID-for-eka-mökki',
+      'ID-for-esko-aho',
       'Eka Mokki',
       'Mökkitie :D',
       3,
@@ -121,8 +122,8 @@ export const databaseSeedStatements = `
     );
 
     INSERT INTO house VALUES (
-      'ID for toka mökki',
-      'ID for aaro eho',
+      'ID-for-toka-mökki',
+      'ID-for-aaro-eho',
       'Toka Mökki',
       'Mökkitie :D',
       3,
@@ -131,62 +132,63 @@ export const databaseSeedStatements = `
     );
 
     INSERT INTO house_users VALUES (
-      'ID for esko aho',
-      'ID for eka mökki'
+      'ID-for-esko-aho',
+      'ID-for-eka-mökki'
     );
 
     INSERT INTO house_users VALUES (
-      'ID for aaro eho',
-      'ID for eka mökki'
+      'ID-for-aaro-eho',
+      'ID-for-eka-mökki'
     );
 
     INSERT INTO house_users VALUES (
-      'ID for jaana pelkonen',
-      'ID for eka mökki'
+      'ID-for-jaana-pelkonen',
+      'ID-for-eka-mökki'
     );
 
     INSERT INTO house_users VALUES (
-      'ID for aaro eho',
-      'ID for toka mökki'
+      'ID-for-aaro-eho',
+      'ID-for-toka-mökki'
     );
 
     INSERT INTO message VALUES (
-      'ID for eka viesti hello this is messageman jne',
-      'ID for esko aho',
-      'ID for eka mökki',
+      'ID-for-eka-viesti-hello-this-is-messageman-jne',
+      'ID-for-esko-aho',
+      'ID-for-eka-mökki',
       'Yes hello this is message man. I bring message about an incident that happened. I want cottage, pls give cottage. Not resolved yet, waiting for gottage',
       NOW()
     );
 
     INSERT INTO message VALUES (
-      'ID for toka viesti this is another messageman jne',
-      'ID for aaro eho',
-      'ID for eka mökki',
+      'ID-for-toka-viesti-this-is-another-messageman-jne',
+      'ID-for-aaro-eho',
+      'ID-for-eka-mökki',
       'This is another message man, want cottage also, pls give.',
       NOW()
     );
 
     INSERT INTO message_reply VALUES (
-      'ID for first message respond this is response to you jne',
-      'ID for jaana pelkonen',
-      'ID for toka viesti this is another messageman jne',
+      'ID-for-first-message-respond-this-is-response-to-you-jne',
+      'ID-for-eka-mökki',
+      'ID-for-jaana-pelkonen',
+      'ID-for-toka-viesti-this-is-another-messageman-jne',
       'This is response to you, message man. You should send more messages, then get cottage.',
       NOW()
     );
 
     INSERT INTO shortage VALUES (
-      'ID for first shortage',
-      'ID for aaro eho',
-      'ID for toka mökki',
+      'ID-for-first-shortage',
+      'ID-for-aaro-eho',
+      'ID-for-toka-mökki',
       'He need some milk',
       FALSE,
       NOW()
     );
 
     INSERT INTO reservation VALUES (
-      'ID for first reservation',
-      'ID for aaro eho',
-      'ID for eka mökki',
+      'ID-for-first-reservation',
+      'ID-for-aaro-eho',
+      'ID-for-eka-mökki',
       2,
       '2021-11-27',
       '2021-11-28',
@@ -195,9 +197,9 @@ export const databaseSeedStatements = `
     );
 
     INSERT INTO reservation VALUES (
-      'ID for second reservation',
-      'ID for jaana pelkonen',
-      'ID for toka mökki',
+      'ID-for-second-reservation',
+      'ID-for-jaana-pelkonen',
+      'ID-for-toka-mökki',
       12,
       '2021-12-17',
       '2021-12-23',
